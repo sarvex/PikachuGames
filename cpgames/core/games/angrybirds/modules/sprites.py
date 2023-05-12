@@ -112,9 +112,7 @@ class Bird(pygame.sprite.Sprite):
         pos = pygame.mouse.get_pos()
         dx, dy = pos[0] - self.loc_info[0], pos[1] - self.loc_info[1]
         dist = math.hypot(dy, dx)
-        if dist < self.loc_info[2]:
-            return True
-        return False
+        return dist < self.loc_info[2]
     '''加载到弹弓上'''
     def load(self, slingshot):
         self.loc_info[0], self.loc_info[1] = slingshot.x, slingshot.y
@@ -181,7 +179,9 @@ class Block(pygame.sprite.Sprite):
         self.gravity = VelocityVector(0.2, math.pi)
         # 导入图像
         self.block_images = []
-        for image in images: self.block_images.append(pygame.transform.scale(image, (100, 100)))
+        self.block_images.extend(
+            pygame.transform.scale(image, (100, 100)) for image in images
+        )
         # 屏幕大小
         self.screen_size = screen.get_rect().size
         self.screen_size = (self.screen_size[0], self.screen_size[1] - 50)
@@ -261,10 +261,7 @@ class Slab(pygame.sprite.Sprite):
         self.height = height
         self.screen = screen
         self.images = images
-        if self.width > self.height:
-            self.image = self.images[0]
-        else:
-            self.image = self.images[1]
+        self.image = self.images[0] if self.width > self.height else self.images[1]
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.type = 'wall'
     '''画到屏幕上'''
@@ -293,9 +290,10 @@ class Button(pygame.sprite.Sprite):
     '''是否被鼠标选中'''
     def selected(self):
         pos = pygame.mouse.get_pos()
-        if (self.x < pos[0] < self.x + self.width) and (self.y < pos[1] < self.y + self.height):
-            return True
-        return False
+        return (
+            self.x < pos[0] < self.x + self.width
+            and self.y < pos[1] < self.y + self.height
+        )
     '''画到屏幕上'''
     def draw(self):
         if self.selected():

@@ -25,29 +25,25 @@ class Hero(pygame.sprite.Sprite):
         if direction == 'up':
             if blocks_list[self.coordinate[1]][self.coordinate[0]].has_walls[0]:
                 return False
-            else:
-                self.coordinate[1] = self.coordinate[1] - 1
-                return True
+            self.coordinate[1] = self.coordinate[1] - 1
+            return True
         elif direction == 'down':
             if blocks_list[self.coordinate[1]][self.coordinate[0]].has_walls[1]:
                 return False
-            else:
-                self.coordinate[1] = self.coordinate[1] + 1
-                return True
+            self.coordinate[1] = self.coordinate[1] + 1
+            return True
         elif direction == 'left':
             if blocks_list[self.coordinate[1]][self.coordinate[0]].has_walls[2]:
                 return False
-            else:
-                self.coordinate[0] = self.coordinate[0] - 1
-                return True
+            self.coordinate[0] = self.coordinate[0] - 1
+            return True
         elif direction == 'right':
             if blocks_list[self.coordinate[1]][self.coordinate[0]].has_walls[3]:
                 return False
-            else:
-                self.coordinate[0] = self.coordinate[0] + 1
-                return True
+            self.coordinate[0] = self.coordinate[0] + 1
+            return True
         else:
-            raise ValueError('Unsupport direction %s in Hero.move...' % direction)
+            raise ValueError(f'Unsupport direction {direction} in Hero.move...')
     '''绑定到屏幕'''
     def draw(self, screen):
         self.rect.left, self.rect.top = self.coordinate[0] * self.block_size + self.border_size[0], self.coordinate[1] * self.block_size + self.border_size[1]

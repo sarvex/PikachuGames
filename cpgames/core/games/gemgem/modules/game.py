@@ -164,19 +164,21 @@ class gemGame():
         self.remaining_time = 300
     '''显示剩余时间'''
     def showRemainingTime(self):
-        remaining_time_render = self.font.render('CountDown: %ss' % str(self.remaining_time), 1, (85, 65, 0))
+        remaining_time_render = self.font.render(
+            f'CountDown: {str(self.remaining_time)}s', 1, (85, 65, 0)
+        )
         rect = remaining_time_render.get_rect()
         rect.left, rect.top = (self.cfg.SCREENSIZE[0]-201, 6)
         self.screen.blit(remaining_time_render, rect)
     '''显示得分'''
     def drawScore(self):
-        score_render = self.font.render('SCORE:'+str(self.score), 1, (85, 65, 0))
+        score_render = self.font.render(f'SCORE:{str(self.score)}', 1, (85, 65, 0))
         rect = score_render.get_rect()
         rect.left, rect.top = (10, 6)
         self.screen.blit(score_render, rect)
     '''显示加分'''
     def drawAddScore(self, add_score):
-        score_render = self.font.render('+'+str(add_score), 1, (255, 100, 100))
+        score_render = self.font.render(f'+{str(add_score)}', 1, (255, 100, 100))
         rect = score_render.get_rect()
         rect.left, rect.top = (250, 250)
         self.screen.blit(score_render, rect)
@@ -268,12 +270,20 @@ class gemGame():
     def isMatch(self):
         for x in range(self.cfg.NUMGRID):
             for y in range(self.cfg.NUMGRID):
-                if x + 2 < self.cfg.NUMGRID:
-                    if self.getGemByPos(x, y).type == self.getGemByPos(x+1, y).type == self.getGemByPos(x+2, y).type:
-                        return [1, x, y]
-                if y + 2 < self.cfg.NUMGRID:
-                    if self.getGemByPos(x, y).type == self.getGemByPos(x, y+1).type == self.getGemByPos(x, y+2).type:
-                        return [2, x, y]
+                if (
+                    x + 2 < self.cfg.NUMGRID
+                    and self.getGemByPos(x, y).type
+                    == self.getGemByPos(x + 1, y).type
+                    == self.getGemByPos(x + 2, y).type
+                ):
+                    return [1, x, y]
+                if (
+                    y + 2 < self.cfg.NUMGRID
+                    and self.getGemByPos(x, y).type
+                    == self.getGemByPos(x, y + 1).type
+                    == self.getGemByPos(x, y + 2).type
+                ):
+                    return [2, x, y]
         return [0, x, y]
     '''根据坐标获取对应位置的拼图对象'''
     def getGemByPos(self, x, y):

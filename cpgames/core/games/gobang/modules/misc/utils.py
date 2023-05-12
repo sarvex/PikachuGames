@@ -21,11 +21,9 @@ def checkDir(dirpath):
 
 '''检查是否有人胜利'''
 def checkWin(chessboard):
-    # 是否是平局
-    is_full = True
-    for i, j in product(range(19), range(19)):
-        if chessboard[i][j] is None:
-            is_full = False
+    is_full = all(
+        chessboard[i][j] is not None for i, j in product(range(19), range(19))
+    )
     if is_full:
         return 'draw'
     # 是否有人赢了
@@ -90,4 +88,4 @@ def receiveAndReadSocketData(socket):
 
 '''包装待发送数据'''
 def packSocketData(data):
-    return (json.dumps(data)+' END').encode()
+    return f'{json.dumps(data)} END'.encode()

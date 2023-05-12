@@ -84,8 +84,14 @@ class GameLevels():
             # --左侧面板栏
             font = pygame.font.Font(self.cfg.FONT_PATHS_NOPRELOAD_DICT['font_cn'], 20)
             font_renders = [
-                self.hero.font.render(str(self.map_level_pointer), True, (255, 255, 255)),
-                font.render('游戏时间: ' + str(pygame.time.get_ticks() // 60000) + ' 分 ' + str(pygame.time.get_ticks() // 1000 % 60) + ' 秒', True, (255, 255, 255)),
+                self.hero.font.render(
+                    str(self.map_level_pointer), True, (255, 255, 255)
+                ),
+                font.render(
+                    f'游戏时间: {str(pygame.time.get_ticks() // 60000)} 分 {str(pygame.time.get_ticks() // 1000 % 60)} 秒',
+                    True,
+                    (255, 255, 255),
+                ),
             ]
             rects = [fr.get_rect() for fr in font_renders]
             rects[0].topleft = (150, 530)
@@ -207,9 +213,9 @@ class GameLevels():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         return selected_level
-                    elif event.key == pygame.K_w or event.key == pygame.K_UP:
+                    elif event.key in [pygame.K_w, pygame.K_UP]:
                         selected_level = max(selected_level - 1, 0)
-                    elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    elif event.key in [pygame.K_s, pygame.K_DOWN]:
                         selected_level = min(selected_level + 1, self.max_map_level_pointer)
             # --对话框
             # ----底色
@@ -254,6 +260,7 @@ class GameLevels():
             hero.num_yellow_keys += add_yellow_keys
             hero.num_purple_keys += add_purple_keys
             hero.num_red_keys += add_red_keys
+
         # 选项定义
         # --第三层商店
         if self.map_level_pointer == 3 and shop_type == 'buy_from_shop':
@@ -328,9 +335,9 @@ class GameLevels():
                     if event.key == pygame.K_SPACE:
                         list(choices_dict.values())[selected_idx-1]()
                         if selected_idx == 4: return
-                    elif event.key == pygame.K_w or event.key == pygame.K_UP:
+                    elif event.key in [pygame.K_w, pygame.K_UP]:
                         selected_idx = max(selected_idx - 1, 1)
-                    elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    elif event.key in [pygame.K_s, pygame.K_DOWN]:
                         selected_idx = min(selected_idx + 1, 4)
             # --对话框
             # ----底色
@@ -346,10 +353,10 @@ class GameLevels():
             # ----展示选项
             for idx, choice in enumerate(['请选择:'] + list(choices_dict.keys())):
                 if selected_idx == idx and idx > 0:
-                    choice = '➤' + choice
+                    choice = f'➤{choice}'
                     font_render = font.render(choice, True, (255, 0, 0))
                 elif idx > 0:
-                    choice = '    ' + choice
+                    choice = f'    {choice}'
                     font_render = font.render(choice, True, (255, 255, 255))
                 else:
                     font_render = font.render(choice, True, (255, 255, 255))

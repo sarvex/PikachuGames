@@ -115,7 +115,7 @@ class WhacAMoleGame(PygameBaseGame):
                 audios['count_down'].play()
             # --游戏结束
             if time_remain < 0: break
-            count_down_text = font.render('Time: '+str(time_remain), True, cfg.WHITE)
+            count_down_text = font.render(f'Time: {str(time_remain)}', True, cfg.WHITE)
             # --按键检测
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -131,13 +131,12 @@ class WhacAMoleGame(PygameBaseGame):
                     mole.setPosition(hole_pos)
             # --碰撞检测
             if hammer.is_hammering and not mole.is_hammer:
-                is_hammer = pygame.sprite.collide_mask(hammer, mole)
-                if is_hammer:
+                if is_hammer := pygame.sprite.collide_mask(hammer, mole):
                     audios['hammering'].play()
                     mole.setBeHammered()
                     your_score += 10
             # --分数
-            your_score_text = font.render('Score: '+str(your_score), True, cfg.BROWN)
+            your_score_text = font.render(f'Score: {str(your_score)}', True, cfg.BROWN)
             # --绑定必要的游戏元素到屏幕(注意顺序)
             screen.blit(bg_img, (0, 0))
             screen.blit(count_down_text, (875, 8))
@@ -154,10 +153,16 @@ class WhacAMoleGame(PygameBaseGame):
             best_score = 0
         # 若当前分数大于最佳分数则更新最佳分数
         if your_score > best_score:
-            f = open(cfg.RECORD_PATH, 'w')
-            f.write(str(your_score))
-            f.close()
+            with open(cfg.RECORD_PATH, 'w') as f:
+                f.write(str(your_score))
         # 结束界面
         score_info = {'your_score': your_score, 'best_score': best_score}
-        is_restart = endInterface(screen, resource_loader.images['end'], resource_loader.images['again'], score_info, cfg.FONT_PATH, [cfg.WHITE, cfg.RED], cfg.SCREENSIZE)
-        return is_restart
+        return endInterface(
+            screen,
+            resource_loader.images['end'],
+            resource_loader.images['again'],
+            score_info,
+            cfg.FONT_PATH,
+            [cfg.WHITE, cfg.RED],
+            cfg.SCREENSIZE,
+        )

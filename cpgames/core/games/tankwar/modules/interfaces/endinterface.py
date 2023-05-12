@@ -52,7 +52,12 @@ def GameEndIterface(screen, cfg, resource_loader, is_win=True):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     return is_quit_game
-                elif event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_w or event.key == pygame.K_s:
+                elif event.key in [
+                    pygame.K_UP,
+                    pygame.K_DOWN,
+                    pygame.K_w,
+                    pygame.K_s,
+                ]:
                     is_quit_game = not is_quit_game
         screen.blit(background_img, (0, 0))
         gameover_flash_count += 1

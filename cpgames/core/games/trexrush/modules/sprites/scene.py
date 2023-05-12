@@ -62,8 +62,10 @@ class Scoreboard(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         # 导入图片
         self.images = []
-        for i in range(12):
-            self.images.append(pygame.transform.scale(image.subsurface((i*20, 0), (20, 24)), size))
+        self.images.extend(
+            pygame.transform.scale(image.subsurface((i * 20, 0), (20, 24)), size)
+            for i in range(12)
+        )
         if is_highest:
             self.image = pygame.Surface((size[0]*8, size[1]))
         else:

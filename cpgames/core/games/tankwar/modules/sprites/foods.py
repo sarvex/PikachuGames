@@ -21,4 +21,4 @@ class Foods(pygame.sprite.Sprite):
         self.exist_time = 1000
     def update(self):
         self.exist_time -= 1
-        return True if self.exist_time < 0 else False
+        return self.exist_time < 0

@@ -93,7 +93,7 @@ class GemGemGame(PygameBaseGame):
                 if flag:
                     break
                 screen.fill((135, 206, 235))
-                text0 = 'Final score: %s' % score
+                text0 = f'Final score: {score}'
                 text1 = 'Press <R> to restart the game.'
                 text2 = 'Press <Esc> to quit the game.'
                 y = 150

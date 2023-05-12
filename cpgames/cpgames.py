@@ -23,7 +23,7 @@ class CPGames():
         self.supported_games = self.initialize()
     '''执行对应的小程序'''
     def execute(self, game_type=None, config={}):
-        assert game_type in self.supported_games, 'unsupport game_type %s...' % game_type
+        assert game_type in self.supported_games, f'unsupport game_type {game_type}...'
         qt_games = ['tetris', 'gobang']
         if game_type in qt_games:
             app = QApplication(sys.argv)
@@ -35,7 +35,7 @@ class CPGames():
             client.run()
     '''初始化'''
     def initialize(self):
-        supported_games = {
+        return {
             'ski': SkiGame,
             'maze': MazeGame,
             'gobang': GobangGame,
@@ -66,13 +66,9 @@ class CPGames():
             'twozerofoureight': TwoZeroFourEightGame,
             'voicecontrolpikachu': VoiceControlPikachuGame,
         }
-        return supported_games
     '''获得所有支持的游戏信息'''
     def getallsupported(self):
-        all_supports = {}
-        for key, value in self.supported_games.items():
-            all_supports[value.game_type] = key
-        return all_supports
+        return {value.game_type: key for key, value in self.supported_games.items()}
     '''str'''
     def __str__(self):
         return 'Welcome to use CPGames!\nYou can visit https://github.com/CharlesPikachu/Games for more details.'

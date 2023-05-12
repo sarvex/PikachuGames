@@ -16,11 +16,19 @@ class Dinosaur(pygame.sprite.Sprite):
         # 导入所有图片
         self.images = []
         image = images[0]
-        for i in range(5):
-            self.images.append(pygame.transform.scale(image.subsurface((i*88, 0), (88, 95)), size[0]))
+        self.images.extend(
+            pygame.transform.scale(
+                image.subsurface((i * 88, 0), (88, 95)), size[0]
+            )
+            for i in range(5)
+        )
         image = images[1]
-        for i in range(2):
-            self.images.append(pygame.transform.scale(image.subsurface((i*118, 0), (118, 95)), size[1]))
+        self.images.extend(
+            pygame.transform.scale(
+                image.subsurface((i * 118, 0), (118, 95)), size[1]
+            )
+            for i in range(2)
+        )
         self.image_idx = 0
         self.image = self.images[self.image_idx]
         self.rect = self.image.get_rect()
@@ -86,14 +94,13 @@ class Dinosaur(pygame.sprite.Sprite):
                 self.refresh_counter = 0
                 self.image_idx = 5 if self.image_idx == 6 else 6
                 self.loadImage()
-        else:
-            if self.refresh_counter % self.refresh_rate == 0:
-                self.refresh_counter = 0
-                if self.image_idx == 1:
-                    self.image_idx = 2
-                elif self.image_idx == 2:
-                    self.image_idx = 3
-                else:
-                    self.image_idx = 1
-                self.loadImage()
+        elif self.refresh_counter % self.refresh_rate == 0:
+            self.refresh_counter = 0
+            if self.image_idx == 1:
+                self.image_idx = 2
+            elif self.image_idx == 2:
+                self.image_idx = 3
+            else:
+                self.image_idx = 1
+            self.loadImage()
         self.refresh_counter += 1

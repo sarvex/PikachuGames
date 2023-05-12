@@ -81,7 +81,7 @@ class TRexRushGame(PygameBaseGame):
                     if event.type == pygame.QUIT:
                         QuitGame()
                     elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                        if event.key in [pygame.K_SPACE, pygame.K_UP]:
                             dino.jump(resource_loader.sounds)
                         elif event.key == pygame.K_DOWN:
                             dino.duck()

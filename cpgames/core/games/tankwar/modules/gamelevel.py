@@ -126,8 +126,7 @@ class GameLevel():
                     tank_player1.move('right', self.scene_elems, player_tanks_group, enemy_tanks_group, home)
                     player_tanks_group.add(tank_player1)
                 elif key_pressed[pygame.K_SPACE]:
-                    bullet = tank_player1.shoot()
-                    if bullet:
+                    if bullet := tank_player1.shoot():
                         self.sounds['fire'].play() if tank_player1.tanklevel < 2 else self.sounds['Gunfire'].play()
                         player_bullets_group.add(bullet)
             # 玩家二, ↑↓←→移动, 小键盘0键射击
@@ -149,8 +148,7 @@ class GameLevel():
                     tank_player2.move('right', self.scene_elems, player_tanks_group, enemy_tanks_group, home)
                     player_tanks_group.add(tank_player2)
                 elif key_pressed[pygame.K_KP0]:
-                    bullet = tank_player2.shoot()
-                    if bullet:
+                    if bullet := tank_player2.shoot():
                         player_bullets_group.add(bullet)
                         self.sounds['fire'].play() if tank_player2.tanklevel < 2 else self.sounds['Gunfire'].play()
             # 碰撞检测
@@ -337,11 +335,15 @@ class GameLevel():
         player1_state_tip_rect = player1_state_tip.get_rect()
         player1_state_tip_rect.left, player1_state_tip_rect.top = self.width+5, self.height*15/30
         screen.blit(player1_state_tip, player1_state_tip_rect)
-        player1_state_tip = self.font.render('Life: %s' % tank_player1.num_lifes, True, color_white)
+        player1_state_tip = self.font.render(
+            f'Life: {tank_player1.num_lifes}', True, color_white
+        )
         player1_state_tip_rect = player1_state_tip.get_rect()
         player1_state_tip_rect.left, player1_state_tip_rect.top = self.width+5, self.height*16/30
         screen.blit(player1_state_tip, player1_state_tip_rect)
-        player1_state_tip = self.font.render('TLevel: %s' % tank_player1.tanklevel, True, color_white)
+        player1_state_tip = self.font.render(
+            f'TLevel: {tank_player1.tanklevel}', True, color_white
+        )
         player1_state_tip_rect = player1_state_tip.get_rect()
         player1_state_tip_rect.left, player1_state_tip_rect.top = self.width+5, self.height*17/30
         screen.blit(player1_state_tip, player1_state_tip_rect)
@@ -350,21 +352,35 @@ class GameLevel():
         player2_state_tip_rect = player2_state_tip.get_rect()
         player2_state_tip_rect.left, player2_state_tip_rect.top = self.width+5, self.height*19/30
         screen.blit(player2_state_tip, player2_state_tip_rect)
-        player2_state_tip = self.font.render('Life: %s' % tank_player2.num_lifes, True, color_white) if tank_player2 else self.font.render('Life: None', True, color_white)
+        player2_state_tip = (
+            self.font.render(f'Life: {tank_player2.num_lifes}', True, color_white)
+            if tank_player2
+            else self.font.render('Life: None', True, color_white)
+        )
         player2_state_tip_rect = player2_state_tip.get_rect()
         player2_state_tip_rect.left, player2_state_tip_rect.top = self.width+5, self.height*20/30
         screen.blit(player2_state_tip, player2_state_tip_rect)
-        player2_state_tip = self.font.render('TLevel: %s' % tank_player2.tanklevel, True, color_white) if tank_player2 else self.font.render('TLevel: None', True, color_white)
+        player2_state_tip = (
+            self.font.render(
+                f'TLevel: {tank_player2.tanklevel}', True, color_white
+            )
+            if tank_player2
+            else self.font.render('TLevel: None', True, color_white)
+        )
         player2_state_tip_rect = player2_state_tip.get_rect()
         player2_state_tip_rect.left, player2_state_tip_rect.top = self.width+5, self.height*21/30
         screen.blit(player2_state_tip, player2_state_tip_rect)
         # 当前关卡
-        game_level_tip = self.font.render('Game Level: %s' % self.gamelevel, True, color_white)
+        game_level_tip = self.font.render(
+            f'Game Level: {self.gamelevel}', True, color_white
+        )
         game_level_tip_rect = game_level_tip.get_rect()
         game_level_tip_rect.left, game_level_tip_rect.top = self.width+5, self.height*23/30
         screen.blit(game_level_tip, game_level_tip_rect)
         # 剩余敌人数量
-        remaining_enemy_tip = self.font.render('Remain Enemy: %s' % self.total_enemy_num, True, color_white)
+        remaining_enemy_tip = self.font.render(
+            f'Remain Enemy: {self.total_enemy_num}', True, color_white
+        )
         remaining_enemy_tip_rect = remaining_enemy_tip.get_rect()
         remaining_enemy_tip_rect.left, remaining_enemy_tip_rect.top = self.width+5, self.height*24/30
         screen.blit(remaining_enemy_tip, remaining_enemy_tip_rect)
@@ -376,49 +392,42 @@ class GameLevel():
     def __parseLevelFile(self):
         f = open(self.levelfilepath, errors='ignore')
         num_row = -1
-        for line in f.readlines():
+        for line in f:
             line = line.strip('\n')
             # 注释
             if line.startswith('#') or (not line):
                 continue
-            # 敌方坦克总数量
             elif line.startswith('%TOTALENEMYNUM'):
                 self.total_enemy_num = int(line.split(':')[-1])
-            # 场上敌方坦克最大数量
             elif line.startswith('%MAXENEMYNUM'):
                 self.max_enemy_num = int(line.split(':')[-1])
-            # 大本营位置
             elif line.startswith('%HOMEPOS'):
                 self.home_position = line.split(':')[-1]
                 self.home_position = [int(self.home_position.split(',')[0]), int(self.home_position.split(',')[1])]
                 self.home_position = (self.border_len+self.home_position[0]*self.grid_size, self.border_len+self.home_position[1]*self.grid_size)
-            # 大本营周围位置
             elif line.startswith('%HOMEAROUNDPOS'):
                 self.home_around_positions = line.split(':')[-1]
                 self.home_around_positions = [[int(pos.split(',')[0]), int(pos.split(',')[1])] for pos in self.home_around_positions.split(' ')]
                 self.home_around_positions = [(self.border_len+pos[0]*self.grid_size, self.border_len+pos[1]*self.grid_size) for pos in self.home_around_positions]
-            # 我方坦克初始位置
             elif line.startswith('%PLAYERTANKPOS'):
                 self.player_tank_positions = line.split(':')[-1]
                 self.player_tank_positions = [[int(pos.split(',')[0]), int(pos.split(',')[1])] for pos in self.player_tank_positions.split(' ')]
                 self.player_tank_positions = [(self.border_len+pos[0]*self.grid_size, self.border_len+pos[1]*self.grid_size) for pos in self.player_tank_positions]
-            # 敌方坦克初始位置
             elif line.startswith('%ENEMYTANKPOS'):
                 self.enemy_tank_positions = line.split(':')[-1]
                 self.enemy_tank_positions = [[int(pos.split(',')[0]), int(pos.split(',')[1])] for pos in self.enemy_tank_positions.split(' ')]
                 self.enemy_tank_positions = [(self.border_len+pos[0]*self.grid_size, self.border_len+pos[1]*self.grid_size) for pos in self.enemy_tank_positions]
-            # 地图元素
             else:
                 num_row += 1
                 for num_col, elem in enumerate(line.split(' ')):
                     position = self.border_len+num_col*self.grid_size, self.border_len+num_row*self.grid_size
                     if elem == 'B':
                         self.scene_elems['brick_group'].add(Brick(position, self.resource_loader.images['scene']['brick']))
+                    elif elem == 'C':
+                        self.scene_elems['ice_group'].add(Ice(position, self.resource_loader.images['scene']['ice']))
                     elif elem == 'I':
                         self.scene_elems['iron_group'].add(Iron(position, self.resource_loader.images['scene']['iron']))
                     elif elem == 'R':
                         self.scene_elems['river_group'].add(River(position, random.choice([self.resource_loader.images['scene']['river1'], self.resource_loader.images['scene']['river2']])))
-                    elif elem == 'C':
-                        self.scene_elems['ice_group'].add(Ice(position, self.resource_loader.images['scene']['ice']))
                     elif elem == 'T':
                         self.scene_elems['tree_group'].add(Tree(position, self.resource_loader.images['scene']['tree']))

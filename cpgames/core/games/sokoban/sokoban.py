@@ -72,16 +72,14 @@ class GameMap():
             elem.draw(screen)
     '''游戏元素迭代器'''
     def elemsIter(self):
-        for elem in chain(self.targets, self.walls, self.boxes):
-            yield elem
+        yield from chain(self.targets, self.walls, self.boxes)
     '''该关卡中所有的箱子是否都在指定位置, 在的话就是通关了'''
     def levelCompleted(self):
         for box in self.boxes:
-            is_match = False
-            for target in self.targets:
-                if box.col == target.col and box.row == target.row:
-                    is_match = True
-                    break
+            is_match = any(
+                box.col == target.col and box.row == target.row
+                for target in self.targets
+            )
             if not is_match:
                 return False
         return True
@@ -96,10 +94,9 @@ class GameMap():
             return False
     '''获得某位置的box'''
     def getBox(self, col, row):
-        for box in self.boxes:
-            if box.col == col and box.row == row:
-                return box
-        return None
+        return next(
+            (box for box in self.boxes if box.col == col and box.row == row), None
+        )
 
 
 '''游戏界面'''
@@ -115,7 +112,12 @@ class GameInterface():
         with open(os.path.join(self.levels_path, game_level), 'r') as f:
             lines = f.readlines()
         # 游戏地图
-        self.game_map = GameMap(max([len(line) for line in lines]) - 1, len(lines), self.cfg, self.resource_loader)
+        self.game_map = GameMap(
+            max(len(line) for line in lines) - 1,
+            len(lines),
+            self.cfg,
+            self.resource_loader,
+        )
         # 游戏surface
         height = self.cfg.BLOCKSIZE * self.game_map.num_rows
         width = self.cfg.BLOCKSIZE * self.game_map.num_cols
@@ -124,14 +126,14 @@ class GameInterface():
         self.game_surface_blank = self.game_surface.copy()
         for row, elems in enumerate(lines):
             for col, elem in enumerate(elems):
-                if elem == 'p':
-                    self.player = pusherSprite(col, row, self.cfg, self.resource_loader)
+                if elem == '#':
+                    self.game_map.addElement('box', col, row)
                 elif elem == '*':
                     self.game_map.addElement('wall', col, row)
-                elif elem == '#':
-                    self.game_map.addElement('box', col, row)
                 elif elem == 'o':
                     self.game_map.addElement('target', col, row)
+                elif elem == 'p':
+                    self.player = pusherSprite(col, row, self.cfg, self.resource_loader)
     '''游戏初始化'''
     def initGame(self):
         self.scroll_x = 0
@@ -157,7 +159,7 @@ class GameInterface():
         if (y + self.cfg.SCREENSIZE[1] // 2) > self.cfg.SCREENSIZE[1]:
             if -1 * self.scroll_y + self.cfg.SCREENSIZE[1] < height:
                 self.scroll_y -= 2
-        elif (y + 250) > 0:
+        elif y > -250:
             if self.scroll_y < 0:
                 self.scroll_y += 2
 
@@ -199,49 +201,41 @@ class SokobanGame(PygameBaseGame):
                         next_pos = game_interface.player.move('left', is_test=True)
                         if game_interface.game_map.isValidPos(*next_pos):
                             game_interface.player.move('left')
-                        else:
-                            box = game_interface.game_map.getBox(*next_pos)
-                            if box:
-                                next_pos = box.move('left', is_test=True)
-                                if game_interface.game_map.isValidPos(*next_pos):
-                                    game_interface.player.move('left')
-                                    box.move('left')
+                        elif box := game_interface.game_map.getBox(*next_pos):
+                            next_pos = box.move('left', is_test=True)
+                            if game_interface.game_map.isValidPos(*next_pos):
+                                game_interface.player.move('left')
+                                box.move('left')
                         break
                     if event.key == pygame.K_RIGHT:
                         next_pos = game_interface.player.move('right', is_test=True)
                         if game_interface.game_map.isValidPos(*next_pos):
                             game_interface.player.move('right')
-                        else:
-                            box = game_interface.game_map.getBox(*next_pos)
-                            if box:
-                                next_pos = box.move('right', is_test=True)
-                                if game_interface.game_map.isValidPos(*next_pos):
-                                    game_interface.player.move('right')
-                                    box.move('right')
+                        elif box := game_interface.game_map.getBox(*next_pos):
+                            next_pos = box.move('right', is_test=True)
+                            if game_interface.game_map.isValidPos(*next_pos):
+                                game_interface.player.move('right')
+                                box.move('right')
                         break
                     if event.key == pygame.K_DOWN:
                         next_pos = game_interface.player.move('down', is_test=True)
                         if game_interface.game_map.isValidPos(*next_pos):
                             game_interface.player.move('down')
-                        else:
-                            box = game_interface.game_map.getBox(*next_pos)
-                            if box:
-                                next_pos = box.move('down', is_test=True)
-                                if game_interface.game_map.isValidPos(*next_pos):
-                                    game_interface.player.move('down')
-                                    box.move('down')
+                        elif box := game_interface.game_map.getBox(*next_pos):
+                            next_pos = box.move('down', is_test=True)
+                            if game_interface.game_map.isValidPos(*next_pos):
+                                game_interface.player.move('down')
+                                box.move('down')
                         break
                     if event.key == pygame.K_UP:
                         next_pos = game_interface.player.move('up', is_test=True)
                         if game_interface.game_map.isValidPos(*next_pos):
                             game_interface.player.move('up')
-                        else:
-                            box = game_interface.game_map.getBox(*next_pos)
-                            if box:
-                                next_pos = box.move('up', is_test=True)
-                                if game_interface.game_map.isValidPos(*next_pos):
-                                    game_interface.player.move('up')
-                                    box.move('up')
+                        elif box := game_interface.game_map.getBox(*next_pos):
+                            next_pos = box.move('up', is_test=True)
+                            if game_interface.game_map.isValidPos(*next_pos):
+                                game_interface.player.move('up')
+                                box.move('up')
                         break
                     if event.key == pygame.K_r:
                         game_interface.initGame()

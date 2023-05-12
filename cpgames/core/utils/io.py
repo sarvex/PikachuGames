@@ -25,29 +25,29 @@ class PygameResourceLoader():
         self.sounds = self.defaultload(sound_paths_dict, pygame.mixer.Sound)
     '''默认的素材导入函数'''
     def defaultload(self, resources_dict, load_func):
-        if resources_dict is None: return dict()
+        if resources_dict is None:
+            return {}
         assert isinstance(resources_dict, dict)
-        resources = dict()
+        resources = {}
         for key, value in resources_dict.items():
             if isinstance(value, dict):
                 resources[key] = self.defaultload(value, load_func)
             elif isinstance(value, list):
-                resources[key] = list()
-                for path in value: resources[key].append(load_func(path))
+                resources[key] = [load_func(path) for path in value]
             else:
                 resources[key] = load_func(value)
         return resources
     '''导入字体'''
     def fontload(self, font_paths_dict):
-        if font_paths_dict is None: return dict()
+        if font_paths_dict is None:
+            return {}
         assert isinstance(font_paths_dict, dict)
-        fonts = dict()
-        for key, value in font_paths_dict.items():
-            if not value.get('system_font', False):
-                fonts[key] = pygame.font.Font(value['name'], value['size'])
-            else:
-                fonts[key] = pygame.font.SysFont(value['name'], value['size'])
-        return fonts
+        return {
+            key: pygame.font.Font(value['name'], value['size'])
+            if not value.get('system_font', False)
+            else pygame.font.SysFont(value['name'], value['size'])
+            for key, value in font_paths_dict.items()
+        }
     '''播放背景音乐'''
     def playbgm(self):
         pygame.mixer.music.load(self.bgm_path)

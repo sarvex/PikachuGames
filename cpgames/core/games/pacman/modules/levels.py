@@ -92,9 +92,7 @@ class Level1():
         self.food_sprites = pygame.sprite.Group()
         for row in range(19):
             for col in range(19):
-                if (row == 7 or row == 8) and (col == 8 or col == 9 or col == 10):
-                    continue
-                else:
+                if row not in [7, 8] or col not in [8, 9, 10]:
                     food = Food(30 * col + 32, 30 * row + 32, 4, 4, food_color, bg_color)
                     is_collide = pygame.sprite.spritecollide(food, self.wall_sprites, False)
                     if is_collide:

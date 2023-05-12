@@ -32,7 +32,7 @@ class GobangSever(QWidget):
         self.opponent_nickname = None
         self.client_ipport = None
         self.is_gaming = False
-        self.chessboard = [[None for i in range(19)] for _ in range(19)]
+        self.chessboard = [[None for _ in range(19)] for _ in range(19)]
         self.history_record = []
         self.winner = None
         self.winner_info_label = None
@@ -48,7 +48,7 @@ class GobangSever(QWidget):
         palette.setBrush(self.backgroundRole(), QBrush(QPixmap(cfg.BACKGROUND_IMAGEPATHS.get('bg_game'))))
         self.setPalette(palette)
         # 显示你的昵称
-        self.nickname_label = QLabel('您是%s' % self.nickname, self)
+        self.nickname_label = QLabel(f'您是{self.nickname}', self)
         self.nickname_label.resize(200, 40)
         self.nickname_label.move(640, 180)
         # 落子标志
@@ -176,7 +176,9 @@ class GobangSever(QWidget):
                 data = {'type': 'reply', 'detail': 'startgame', 'data': True}
                 self.tcp_socket.sendall(packSocketData(data))
                 self.is_gaming = True
-                self.setWindowTitle('五子棋-微信公众号: Charles的皮卡丘 ——> %s走棋' % self.whoseround2nickname_dict.get(self.whoseround))
+                self.setWindowTitle(
+                    f'五子棋-微信公众号: Charles的皮卡丘 ——> {self.whoseround2nickname_dict.get(self.whoseround)}走棋'
+                )
                 for i, j in product(range(19), range(19)):
                     if self.chessboard[i][j]:
                         self.chessboard[i][j].close()
@@ -226,14 +228,15 @@ class GobangSever(QWidget):
                 self.chessman_sign.hide()
                 self.nextRound()
                 data = {'type': 'reply', 'detail': 'regret', 'data': True}
-                self.tcp_socket.sendall(packSocketData(data))
             else:
                 data = {'type': 'reply', 'detail': 'regret', 'data': False}
-                self.tcp_socket.sendall(packSocketData(data))
+            self.tcp_socket.sendall(packSocketData(data))
         elif data['type'] == 'reply' and data['detail'] == 'startgame':
             if data['data']:
                 self.is_gaming = True
-                self.setWindowTitle('五子棋-微信公众号: Charles的皮卡丘 ——> %s走棋' % self.whoseround2nickname_dict.get(self.whoseround))
+                self.setWindowTitle(
+                    f'五子棋-微信公众号: Charles的皮卡丘 ——> {self.whoseround2nickname_dict.get(self.whoseround)}走棋'
+                )
                 for i, j in product(range(19), range(19)):
                     if self.chessboard[i][j]:
                         self.chessboard[i][j].close()
@@ -267,7 +270,9 @@ class GobangSever(QWidget):
     '''改变落子方'''
     def nextRound(self):
         self.whoseround = self.player_color if self.whoseround == self.opponent_player_color else self.opponent_player_color
-        self.setWindowTitle('五子棋-微信公众号: Charles的皮卡丘 ——> %s走棋' % self.whoseround2nickname_dict.get(self.whoseround))
+        self.setWindowTitle(
+            f'五子棋-微信公众号: Charles的皮卡丘 ——> {self.whoseround2nickname_dict.get(self.whoseround)}走棋'
+        )
     '''开始监听客户端的连接'''
     def startListen(self):
         while True:

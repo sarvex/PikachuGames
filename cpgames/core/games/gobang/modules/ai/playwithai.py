@@ -52,7 +52,7 @@ class PlayWithAIUI(QWidget):
         self.chessman_sign.show()
         self.chessman_sign.hide()
         # 棋盘(19*19矩阵)
-        self.chessboard = [[None for i in range(19)] for _ in range(19)]
+        self.chessboard = [[None for _ in range(19)] for _ in range(19)]
         # 历史记录(悔棋用)
         self.history_record = []
         # 是否在游戏中

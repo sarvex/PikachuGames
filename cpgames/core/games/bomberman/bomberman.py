@@ -6,6 +6,7 @@ Author:
 微信公众号:
     Charles的皮卡丘
 '''
+
 import os
 import random
 import pygame
@@ -15,7 +16,9 @@ from .modules import Wall, Background, Fruit, Bomb, Hero, showText, Button, Inte
 
 
 '''配置类'''
-class Config():
+
+
+class Config:
     # 根目录
     rootdir = os.path.split(os.path.abspath(__file__))[0]
     # 屏幕大小
@@ -34,10 +37,10 @@ class Config():
     TITLE = '炸弹人小游戏 —— Charles的皮卡丘'
     # 背景音乐路径
     BGM_PATH = os.path.join(rootdir, 'resources/audios/bgm.mp3')
-    # 游戏地图路径
-    GAMEMAPPATHS = []
-    for path in ['resources/maps/1.map', 'resources/maps/2.map']:
-        GAMEMAPPATHS.append(os.path.join(rootdir, path))
+    GAMEMAPPATHS = [
+        os.path.join(rootdir, path)
+        for path in ['resources/maps/1.map', 'resources/maps/2.map']
+    ]
     # 游戏图片路径
     IMAGE_PATHS_DICT = {
         'wall': [
@@ -77,6 +80,7 @@ class Config():
     }
 
 
+
 '''炸弹人小游戏'''
 class BomberManGame(PygameBaseGame):
     game_type = 'bomberman'
@@ -100,7 +104,7 @@ class BomberManGame(PygameBaseGame):
                 # -水果
                 fruit_sprite_group = pygame.sprite.Group()
                 used_spaces = []
-                for i in range(5):
+                for _ in range(5):
                     coordinate = map_parser.randomGetSpace(used_spaces)
                     used_spaces.append(coordinate)
                     fruit_kind = random.choice(list(resource_loader.images['fruit'].keys()))
@@ -157,8 +161,7 @@ class BomberManGame(PygameBaseGame):
                     for bomb in bomb_sprite_group:
                         if not bomb.is_being:
                             bomb_sprite_group.remove(bomb)
-                        explode_area = bomb.draw(screen, dt, map_parser)
-                        if explode_area:
+                        if explode_area := bomb.draw(screen, dt, map_parser):
                             # --爆炸火焰范围内的Hero生命值将持续下降
                             if ourhero.coordinate in explode_area:
                                 ourhero.health_value -= bomb.harm_value
@@ -170,10 +173,22 @@ class BomberManGame(PygameBaseGame):
                         hero.draw(screen, dt)
                     ourhero.draw(screen, dt)
                     # --左上角显示生命值
-                    pos_x = showText(screen, font, text=ourhero.hero_name+'(our):'+str(ourhero.health_value), color=cfg.YELLOW, position=[5, 5])
+                    pos_x = showText(
+                        screen,
+                        font,
+                        text=f'{ourhero.hero_name}(our):{str(ourhero.health_value)}',
+                        color=cfg.YELLOW,
+                        position=[5, 5],
+                    )
                     for hero in aihero_sprite_group:
                         pos_x, pos_y = pos_x+15, 5
-                        pos_x = showText(screen, font, text=hero.hero_name+'(ai):'+str(hero.health_value), color=cfg.YELLOW, position=[pos_x, pos_y])
+                        pos_x = showText(
+                            screen,
+                            font,
+                            text=f'{hero.hero_name}(ai):{str(hero.health_value)}',
+                            color=cfg.YELLOW,
+                            position=[pos_x, pos_y],
+                        )
                     # --我方玩家生命值小于等于0/电脑方玩家生命值均小于等于0则判断游戏结束
                     if ourhero.health_value <= 0:
                         is_win_flag = False

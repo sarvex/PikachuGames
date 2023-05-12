@@ -84,9 +84,10 @@ class Player(pygame.sprite.Sprite):
                 self.switch()
                 self.position[1] = min(max(305, self.position[1] + self.direction[1] * self.speed), 459)
                 self.rect.left, self.rect.top = self.position
-                if self.rect.top == 305 or self.rect.top == 459: 
+                if self.rect.top in [305, 459]: 
                     self.direction = self.direction[0], -self.direction[1]
                     self.setdirection(self.direction)
+
             # --有球就随机射球
             if ball.taken_by_player == self:
                 if self.group_id == 1:
@@ -118,7 +119,6 @@ class Player(pygame.sprite.Sprite):
             # --没球来回走
             else:
                 wondering(self)
-        # 其他球员跟着球走
         else:
             if ball.taken_by_player == self:
                 self.switch()

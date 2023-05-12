@@ -19,7 +19,7 @@ def GameEndIterface(screen, sounds, showScore, score, number_images, bird, pipe_
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 QuitGame()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                if event.key in [pygame.K_SPACE, pygame.K_UP]:
                     return
         boundary_values = [0, base_pos[-1]]
         bird.update(boundary_values, float(clock.tick(cfg.FPS))/1000.)

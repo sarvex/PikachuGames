@@ -28,7 +28,7 @@ def GameEndInterface(screen, cfg, resource_loader):
             if event.type == pygame.QUIT:
                 QuitGame()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                if event.key in [pygame.K_SPACE, pygame.K_UP]:
                     return True
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()

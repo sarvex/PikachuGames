@@ -34,17 +34,14 @@ def showLife(screen, num_life, color):
 def endInterface(screen, color, is_win, cfg, resource_loader):
     screen.fill(color)
     clock = pygame.time.Clock()
-    if is_win:
-        text = 'VICTORY'
-    else:
-        text = 'FAILURE'
+    text = 'VICTORY' if is_win else 'FAILURE'
     font = resource_loader.fonts['default30']
     text_render = font.render(text, 1, (255, 255, 255))
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 QuitGame()
-            if (event.type == pygame.KEYDOWN) or (event.type == pygame.MOUSEBUTTONDOWN):
+            if event.type in [pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN]:
                 return
         screen.blit(text_render, (350, 300))
         clock.tick(cfg.FPS)

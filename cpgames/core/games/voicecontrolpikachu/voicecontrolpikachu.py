@@ -51,7 +51,7 @@ class VoiceControlPikachuLayer(cocos.layer.ColorLayer):
         self.floor = cocos.cocosnode.CocosNode()
         self.add(self.floor)
         position = 0, 100
-        for i in range(120):
+        for _ in range(120):
             b = Block(os.path.split(config.IMAGE_PATHS_DICT['block'])[1], position)
             self.floor.add(b)
             position = b.x + b.width, b.height
@@ -64,10 +64,13 @@ class VoiceControlPikachuLayer(cocos.layer.ColorLayer):
     def collide(self):
         diffx = self.pikachu.x - self.floor.x
         for b in self.floor.get_children():
-            if (b.x <= diffx + self.pikachu.width * 0.8) and (diffx + self.pikachu.width * 0.2 <= b.x + b.width):
-                if self.pikachu.y < b.height:
-                    self.pikachu.land(b.height)
-                    break
+            if (
+                (b.x <= diffx + self.pikachu.width * 0.8)
+                and (diffx + self.pikachu.width * 0.2 <= b.x + b.width)
+                and self.pikachu.y < b.height
+            ):
+                self.pikachu.land(b.height)
+                break
     '''定义游戏规则'''
     def update(self, dt):
         # 获取每帧的音量

@@ -83,7 +83,7 @@ class CatchCoinsGame(PygameBaseGame):
                 screen.fill(0)
                 screen.blit(game_images['background'], (0, 0))
                 # --倒计时信息
-                countdown_text = 'Count down: ' + str((90000 - pygame.time.get_ticks()) // 60000) + ":" + str((90000 - pygame.time.get_ticks()) // 1000 % 60).zfill(2)
+                countdown_text = f'Count down: {str((90000 - pygame.time.get_ticks()) // 60000)}:{str((90000 - pygame.time.get_ticks()) // 1000 % 60).zfill(2)}'
                 countdown_text = font.render(countdown_text, True, (0, 0, 0))
                 countdown_rect = countdown_text.get_rect()
                 countdown_rect.topright = [cfg.SCREENSIZE[0]-30, 5]
@@ -130,8 +130,6 @@ class CatchCoinsGame(PygameBaseGame):
                 # --更新屏幕
                 pygame.display.flip()
                 clock.tick(cfg.FPS)
-            # 游戏结束, 记录最高分并显示游戏结束画面
-            fp = open(cfg.HIGHEST_SCORE_RECORD_FILEPATH, 'w')
-            fp.write(str(highest_score))
-            fp.close()
+            with open(cfg.HIGHEST_SCORE_RECORD_FILEPATH, 'w') as fp:
+                fp.write(str(highest_score))
             flag = ShowEndGameInterface(screen, cfg, score, highest_score, resource_loader)

@@ -86,4 +86,4 @@ def Interface(screen, cfg, mode='game_start'):
             pygame.display.update()
             clock.tick(cfg.FPS)
     else:
-        raise ValueError('Interface.mode unsupport %s...' % mode)
+        raise ValueError(f'Interface.mode unsupport {mode}...')

@@ -24,6 +24,4 @@ class Food(pygame.sprite.Sprite):
     '''更新食物位置'''
     def update(self):
         self.rect.bottom += self.speed
-        if self.rect.top > self.screensize[1]:
-            return True
-        return False
+        return self.rect.top > self.screensize[1]

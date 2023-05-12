@@ -48,16 +48,17 @@ class tetrisShape():
             return [[-y, x] for x, y in self.relative_coords]
         # 逆时针旋转180度
         if direction == 2:
-            if self.shape in [self.shape_I, self.shape_Z, self.shape_S]:
-                return self.relative_coords
-            else:
-                return [[-x, -y] for x, y in self.relative_coords]
-        # 逆时针旋转270度
-        if direction == 3:
-            if self.shape in [self.shape_I, self.shape_Z, self.shape_S]:
-                return [[-y, x] for x, y in self.relative_coords]
-            else:
-                return [[y, -x] for x, y in self.relative_coords]
+            return (
+                self.relative_coords
+                if self.shape in [self.shape_I, self.shape_Z, self.shape_S]
+                else [[-x, -y] for x, y in self.relative_coords]
+            )
+        elif direction == 3:
+            return (
+                [[-y, x] for x, y in self.relative_coords]
+                if self.shape in [self.shape_I, self.shape_Z, self.shape_S]
+                else [[y, -x] for x, y in self.relative_coords]
+            )
     '''获得该俄罗斯方块的各个小块绝对坐标'''
     def getAbsoluteCoords(self, direction, x, y):
         return [[x + i, y + j] for i, j in self.getRotatedRelativeCoords(direction)]

@@ -13,14 +13,8 @@ def loadLevel(levelpath):
     brick_positions = []
     fp = open(levelpath, 'r', encoding='utf-8')
     y = -1
-    for line in fp.readlines():
-        if (not line.strip()) or (line.startswith('#')):
-            continue
-        else:
+    for line in fp:
+        if line.strip() and not (line.startswith('#')):
             y += 1
-            x = -1
-            for c in line:
-                x += 1
-                if c == 'B':
-                    brick_positions.append([x, y])
+            brick_positions.extend([x, y] for x, c in enumerate(line) if c == 'B')
     return brick_positions

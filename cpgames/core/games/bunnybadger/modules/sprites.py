@@ -54,9 +54,12 @@ class ArrowSprite(pygame.sprite.Sprite):
         vely = math.sin(self.angle) * self.speed
         self.rect.left += velx
         self.rect.top += vely
-        if self.rect.right < 0 or self.rect.left > screensize[0] or self.rect.top > screensize[1] or self.rect.bottom < 0:
-            return True
-        return False
+        return (
+            self.rect.right < 0
+            or self.rect.left > screensize[0]
+            or self.rect.top > screensize[1]
+            or self.rect.bottom < 0
+        )
 
 
 '''定义獾类'''
@@ -71,6 +74,4 @@ class BadguySprite(pygame.sprite.Sprite):
     '''更新獾'''
     def update(self):
         self.rect.left -= self.speed
-        if self.rect.left < 64:
-            return True
-        return False
+        return self.rect.left < 64

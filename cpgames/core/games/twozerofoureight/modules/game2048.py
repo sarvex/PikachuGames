@@ -116,15 +116,13 @@ class Game2048(object):
         self.move_direction = direction
     '''保存最高分'''
     def saveMaxScore(self):
-        f = open(self.max_score_filepath, 'w', encoding='utf-8')
-        f.write(str(self.max_score))
-        f.close()
+        with open(self.max_score_filepath, 'w', encoding='utf-8') as f:
+            f.write(str(self.max_score))
     '''读取游戏最高分'''
     def readMaxScore(self):
         try:
-            f = open(self.max_score_filepath, 'r', encoding='utf-8')
-            score = int(f.read().strip())
-            f.close()
+            with open(self.max_score_filepath, 'r', encoding='utf-8') as f:
+                score = int(f.read().strip())
             return score
         except:
             return 0
@@ -142,7 +140,9 @@ class Game2048(object):
                 elif (j == self.matrix_size[1] - 1):
                     if (self.game_matrix[i][j] == self.game_matrix[i+1][j]):
                         return False
-                else:
-                    if (self.game_matrix[i][j] == self.game_matrix[i+1][j]) or (self.game_matrix[i][j] == self.game_matrix[i][j+1]):
-                        return False
+                elif self.game_matrix[i][j] in [
+                    self.game_matrix[i + 1][j],
+                    self.game_matrix[i][j + 1],
+                ]:
+                    return False
         return True

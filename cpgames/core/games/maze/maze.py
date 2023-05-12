@@ -88,18 +88,19 @@ class MazeGame(PygameBaseGame):
                 maze_now.draw(screen)
                 # ----显示一些信息
                 showText(screen, font, 'LEVELDONE: %d' % num_levels, (255, 0, 0), (10, 10))
-                showText(screen, font, 'BESTSCORE: %s' % best_scores, (255, 0, 0), (210, 10))
-                showText(screen, font, 'USEDSTEPS: %s' % num_steps, (255, 0, 0), (410, 10))
+                showText(screen, font, f'BESTSCORE: {best_scores}', (255, 0, 0), (210, 10))
+                showText(screen, font, f'USEDSTEPS: {num_steps}', (255, 0, 0), (410, 10))
                 showText(screen, font, 'S: your starting point    D: your destination', (255, 0, 0), (10, 600))
                 # ----判断游戏是否胜利
                 if (hero_now.coordinate[0] == cfg.MAZESIZE[1] - 1) and (hero_now.coordinate[1] == cfg.MAZESIZE[0] - 1):
                     break
                 pygame.display.update()
             # --更新最优成绩
-            if best_scores == 'None':
+            if (
+                best_scores != 'None'
+                and best_scores > num_steps
+                or best_scores == 'None'
+            ):
                 best_scores = num_steps
-            else:
-                if best_scores > num_steps:
-                    best_scores = num_steps
             # --关卡切换
             Interface(screen, cfg, mode='game_switch')

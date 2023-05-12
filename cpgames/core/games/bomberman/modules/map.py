@@ -59,10 +59,7 @@ class mapParser():
     def __parse(self, mapfilepath):
         instances_list = []
         with open(mapfilepath) as f:
-            for line in f.readlines():
-                instances_line_list = []
-                for c in line:
-                    if c in ['w', 'x', 'z', '0', '1', '2']:
-                        instances_line_list.append(c)
+            for line in f:
+                instances_line_list = [c for c in line if c in ['w', 'x', 'z', '0', '1', '2']]
                 instances_list.append(instances_line_list)
         return instances_list

@@ -118,7 +118,6 @@ class Hero(pygame.sprite.Sprite):
                 self.num_red_keys -= 1
                 flag = True
             return flag, []
-        # 捡到不同颜色的钥匙
         elif elem in ['6', '7', '8']:
             if elem == '6':
                 self.num_yellow_keys += 1
@@ -130,16 +129,14 @@ class Hero(pygame.sprite.Sprite):
                 self.num_red_keys += 1
                 self.obtain_tips = '得到一把红钥匙'
             return True, []
-        # 捡到宝石
         elif elem in ['9', '10']:
-            if elem == '9':
-                self.defense_power += 3
-                self.obtain_tips = '得到一个蓝宝石 防御力加3'
-            elif elem == '10':
+            if elem == '10':
                 self.attack_power += 3
                 self.obtain_tips = '得到一个红宝石 攻击力加3'
+            elif elem == '9':
+                self.defense_power += 3
+                self.obtain_tips = '得到一个蓝宝石 防御力加3'
             return True, []
-        # 捡到血瓶
         elif elem in ['11', '12']:
             if elem == '11':
                 self.life_value += 200
@@ -148,12 +145,10 @@ class Hero(pygame.sprite.Sprite):
                 self.life_value += 500
                 self.obtain_tips = '得到一个大血瓶 生命加500'
             return True, []
-        # 上下楼梯
         elif elem in ['13', '14']:
             if elem == '13': events = ['upstairs']
             elif elem == '14': events = ['downstairs']
             return False, events
-        # 商店
         elif elem in ['22', '26', '27']:
             if elem == '22':
                 return False, ['buy_from_shop']
@@ -161,13 +156,11 @@ class Hero(pygame.sprite.Sprite):
                 return False, ['buy_from_oldman']
             elif elem == '27':
                 return False, ['buy_from_businessman']
-        # 遇到仙女, 进行对话, 并左移一格
         elif elem in ['24']:
             if map_parser.map_matrix[block_position[1]][block_position[0] - 1] == '0':
                 map_parser.map_matrix[block_position[1]][block_position[0] - 1] = elem
                 map_parser.map_matrix[block_position[1]][block_position[0]] = '0'
             return False, ['conversation_hero_and_fairy']
-        # 捡到道具飞羽
         elif elem in ['30', '31']:
             if elem == '30':
                 self.level += 1
@@ -182,85 +175,69 @@ class Hero(pygame.sprite.Sprite):
                 self.defense_power += 21
                 self.obtain_tips = '得到大飞羽 等级提升三级'
             return True, []
-        # 捡到幸运十字架
         elif elem in ['32']:
             self.has_cross = True
             self.obtain_tips = ['【幸运十字架】把它交给序章中的仙子', '可以将自身的所有能力提升一些(攻击防御和生命值)']
             return True, []
-        # 捡到圣水瓶
         elif elem in ['33']:
             self.life_value *= 2
             self.obtain_tips = '【圣水瓶】它可以将你的体质增加一倍'
             return True, []
-        # 捡到圣光徽
         elif elem in ['34']:
             self.has_forecast = True
             self.obtain_tips = '【圣光徽】按L键使用 查看怪物的基本情况'
             return True, []
-        # 捡到风之罗盘
         elif elem in ['35']:
             self.has_jump = True
             self.obtain_tips = '【风之罗盘】按J键使用 在已经走过的楼层间进行跳跃'
             return True, []
-        # 捡到钥匙盒
         elif elem in ['36']:
             self.num_yellow_keys += 1
             self.num_purple_keys += 1
             self.num_red_keys += 1
             self.obtain_tips = '得到钥匙盒 各种钥匙数加1'
             return True, []
-        # 捡到星光神榔
         elif elem in ['38']:
             self.has_hammer = True
             self.obtain_tips = ['【星光神榔】把它交给第四层的小偷', '小偷便会用它打开第十八层的隐藏地面']
             return True, []
-        # 捡到金块
         elif elem in ['39']:
             self.num_coins += 300
             self.obtain_tips = '得到金块 金币数加300'
             return True, []
-        # 遇到怪物
         elif elem in map_parser.monsters_dict:
             monster = map_parser.monsters_dict[elem]
-            if self.winmonster(monster)[0]:
-                self.battle(monster, map_parser.element_images[elem][0], map_parser, screen)
-                self.num_coins += monster[4]
-                self.experience += monster[5]
-                self.obtain_tips = f'获得金币数{monster[4]} 经验值{monster[5]}'
-                return True, []
-            else:
+            if not self.winmonster(monster)[0]:
                 return False, []
-        # 得到铁剑
+            self.battle(monster, map_parser.element_images[elem][0], map_parser, screen)
+            self.num_coins += monster[4]
+            self.experience += monster[5]
+            self.obtain_tips = f'获得金币数{monster[4]} 经验值{monster[5]}'
+            return True, []
         elif elem in ['71']:
             self.attack_power += 10
             self.obtain_tips = '得到铁剑 攻击力加10'
             return True, []
-        # 得到钢剑
         elif elem in ['73']:
             self.attack_power += 30
             self.obtain_tips = '得到钢剑 攻击力加30'
             return True, []
-        # 得到圣光剑
         elif elem in ['75']:
             self.attack_power += 120
             self.obtain_tips = '得到圣光剑 攻击力加120'
             return True, []
-        # 得到铁盾
         elif elem in ['76']:
             self.defense_power += 10
             self.obtain_tips = '得到铁盾 防御力加10'
             return True, []
-        # 得到钢盾
         elif elem in ['78']:
             self.defense_power += 30
             self.obtain_tips = '得到钢盾 防御力加30'
             return True, []
-        # 得到星光盾
         elif elem in ['80']:
             self.defense_power += 120
             self.obtain_tips = '得到星光盾 防御力加120'
             return True, []
-        # 其他
         else:
             return False, []
     '''游戏事件提示'''

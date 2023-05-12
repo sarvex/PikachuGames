@@ -6,6 +6,7 @@ Author:
 微信公众号:
     Charles的皮卡丘
 '''
+
 import os
 import pygame
 from ...utils import QuitGame
@@ -14,13 +15,15 @@ from .modules import Paddle, Ball, Brick, loadLevel
 
 
 '''配置类'''
-class Config():
+
+
+class Config:
     # 根目录
     rootdir = os.path.split(os.path.abspath(__file__))[0]
     # 一些颜色
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
-    PINK = (212, 149, 174) 
+    PINK = (212, 149, 174)
     PURPLE = (168, 152, 191)
     YELLOW = (245, 237, 162)
     BLUE  = (51, 170, 230)
@@ -53,10 +56,10 @@ class Config():
     }
     # 关卡路径
     LEVELROOTDIR = os.path.join(rootdir, 'resources/levels')
-    LEVELPATHS = []
-    for i in range(len(os.listdir(LEVELROOTDIR))):
-        LEVELPATHS.append(os.path.join(LEVELROOTDIR, '%s.level' % str(i+1)))
-
+    LEVELPATHS = [
+        os.path.join(LEVELROOTDIR, f'{str(i + 1)}.level')
+        for i in range(len(os.listdir(LEVELROOTDIR)))
+    ]
 
 '''打砖块小游戏'''
 class BreakoutcloneGame(PygameBaseGame):
@@ -134,7 +137,9 @@ class BreakoutcloneGame(PygameBaseGame):
             ball.draw(self.screen, self.cfg.WHITE)
             for brick in brick_sprites:
                 brick.draw(self.screen, self.cfg.YELLOW)
-            text_render = self.font_small.render('SCORE: %s, LIVES: %s' % (score, num_lives), False, self.cfg.BLUE)
+            text_render = self.font_small.render(
+                f'SCORE: {score}, LIVES: {num_lives}', False, self.cfg.BLUE
+            )
             self.screen.blit(text_render, (10, 10))
             pygame.display.flip()
             clock.tick(self.cfg.FPS_GAMING)
@@ -173,10 +178,7 @@ class BreakoutcloneGame(PygameBaseGame):
             clock.tick(self.cfg.FPS)
     '''结束界面'''
     def __endInterface(self, is_win):
-        if is_win:
-            text1 = 'Congratulations! You win!'
-        else:
-            text1 = 'Game Over! You fail!'
+        text1 = 'Congratulations! You win!' if is_win else 'Game Over! You fail!'
         text2 = 'Press <R> to restart the game'
         text3 = 'Press <Esc> to quit the game.'
         clock = pygame.time.Clock()

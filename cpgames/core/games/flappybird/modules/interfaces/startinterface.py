@@ -29,7 +29,7 @@ def GameStartInterface(screen, sounds, bird_images, other_images, backgroud_imag
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 QuitGame()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                if event.key in [pygame.K_SPACE, pygame.K_UP]:
                     return {'bird_pos': bird_pos, 'base_pos': base_pos, 'bird_idx': bird_idx}
         sounds['wing'].play()
         bird_idx_change_count += 1

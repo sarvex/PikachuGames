@@ -92,7 +92,10 @@ class InnerBoard():
         new_y = self.height - 1
         removed_lines = 0
         for y in range(self.height - 1, -1, -1):
-            cell_count = sum([1 if self.board_data[x + y * self.width] > 0 else 0 for x in range(self.width)])
+            cell_count = sum(
+                1 if self.board_data[x + y * self.width] > 0 else 0
+                for x in range(self.width)
+            )
             if cell_count < self.width:
                 for x in range(self.width):
                     new_board_data[x + new_y * self.width] = self.board_data[x + y * self.width]

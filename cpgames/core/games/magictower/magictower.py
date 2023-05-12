@@ -6,6 +6,7 @@ Author:
 微信公众号:
     Charles的皮卡丘
 '''
+
 import os
 import pygame
 from ..base import PygameBaseGame
@@ -13,7 +14,9 @@ from .modules import StartGameInterface, GameLevels
 
 
 '''配置类'''
-class Config():
+
+
+class Config:
     # 根目录
     rootdir = os.path.split(os.path.abspath(__file__))[0]
     # 屏幕大小
@@ -31,13 +34,19 @@ class Config():
     }
     # 游戏地图路径
     MAPPATHS = [
-        os.path.join(os.path.split(os.path.abspath(__file__))[0], f'resources/levels/{idx}.lvl') for idx in range(len(os.listdir(os.path.join(rootdir, f'resources/levels/'))))
+        os.path.join(
+            os.path.split(os.path.abspath(__file__))[0],
+            f'resources/levels/{idx}.lvl',
+        )
+        for idx in range(
+            len(os.listdir(os.path.join(rootdir, 'resources/levels/')))
+        )
     ]
     # 游戏图片路径
     IMAGE_PATHS_DICT = {
-        'battlebg': os.path.join(rootdir, f'resources/images/battlebg.png'),
-        'blankbg': os.path.join(rootdir, f'resources/images/blankbg.png'),
-        'gamebg': os.path.join(rootdir, f'resources/images/gamebg.png'),
+        'battlebg': os.path.join(rootdir, 'resources/images/battlebg.png'),
+        'blankbg': os.path.join(rootdir, 'resources/images/blankbg.png'),
+        'gamebg': os.path.join(rootdir, 'resources/images/gamebg.png'),
         'hero': {},
         'mapelements': {},
     }
@@ -48,6 +57,7 @@ class Config():
         ]
     for filename in os.listdir(os.path.join(rootdir, 'resources/images/player/')):
         IMAGE_PATHS_DICT['hero'][filename.split('.')[0]] = os.path.join(rootdir, f'resources/images/player/{filename}')
+
 
 
 '''魔塔小游戏'''

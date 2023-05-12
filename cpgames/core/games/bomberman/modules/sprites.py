@@ -51,7 +51,7 @@ class Fruit(pygame.sprite.Sprite):
         elif self.kind == 'cherry':
             self.value = 10
         else:
-            raise ValueError('Unknow fruit %s...' % self.kind)
+            raise ValueError(f'Unknow fruit {self.kind}...')
         self.image = pygame.transform.scale(image, (blocksize, blocksize))
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = coordinate[0] * blocksize, coordinate[1] * blocksize
@@ -99,15 +99,13 @@ class Bomb(pygame.sprite.Sprite):
             text = self.font.render(str(self.explode_second), True, self.digitalcolor)
             rect = text.get_rect(center=(self.rect.centerx-5, self.rect.centery+5))
             screen.blit(text, rect)
-            return False
         else:
             # 爆炸持续倒计时
             self.exploding_count -= dt
             if self.exploding_count > 0:
                 return self.__explode(screen, map_parser)
-            else:
-                self.is_being = False
-                return False
+            self.is_being = False
+        return False
     '''爆炸效果'''
     def __explode(self, screen, map_parser):
         explode_area = self.__calcExplodeArea(map_parser.instances_list)
@@ -166,7 +164,9 @@ class Hero(pygame.sprite.Sprite):
     def move(self, direction):
         self.__updateImage(direction)
         if direction == 'left':
-            if self.coordinate[0]-1 < 0 or self.map_parser.getElemByCoordinate([self.coordinate[0]-1, self.coordinate[1]]) in ['w', 'x', 'z']:
+            if self.coordinate[0] < 1 or self.map_parser.getElemByCoordinate(
+                [self.coordinate[0] - 1, self.coordinate[1]]
+            ) in ['w', 'x', 'z']:
                 return False
             self.coordinate[0] = self.coordinate[0] - 1
         elif direction == 'right':
@@ -174,7 +174,9 @@ class Hero(pygame.sprite.Sprite):
                 return False
             self.coordinate[0] = self.coordinate[0] + 1
         elif direction == 'up':
-            if self.coordinate[1]-1 < 0 or self.map_parser.getElemByCoordinate([self.coordinate[0], self.coordinate[1]-1]) in ['w', 'x', 'z']:
+            if self.coordinate[1] < 1 or self.map_parser.getElemByCoordinate(
+                [self.coordinate[0], self.coordinate[1] - 1]
+            ) in ['w', 'x', 'z']:
                 return False
             self.coordinate[1] = self.coordinate[1] - 1
         elif direction == 'down':
@@ -182,7 +184,7 @@ class Hero(pygame.sprite.Sprite):
                 return False
             self.coordinate[1] = self.coordinate[1] + 1
         else:
-            raise ValueError('Unknow direction %s...' % direction)
+            raise ValueError(f'Unknow direction {direction}...')
         self.rect.left, self.rect.top = self.coordinate[0] * self.blocksize, self.coordinate[1] * self.blocksize
         return True
     '''随机行动(AI电脑用)'''

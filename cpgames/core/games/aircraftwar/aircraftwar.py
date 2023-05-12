@@ -111,11 +111,10 @@ class AircraftWarGame(PygameBaseGame):
                         direction = 'right'
                     if direction:
                         player.move(direction)
-                    if pressed_keys[pygame.K_j]:
-                        if player.cooling_time == 0:
-                            fire_sound.play()
-                            bullet_group.add(player.shot())
-                            player.cooling_time = 20
+                    if pressed_keys[pygame.K_j] and player.cooling_time == 0:
+                        fire_sound.play()
+                        bullet_group.add(player.shot())
+                        player.cooling_time = 20
                 elif idx == 1:
                     if pressed_keys[pygame.K_w]:
                         direction = 'up'
@@ -127,11 +126,10 @@ class AircraftWarGame(PygameBaseGame):
                         direction = 'right'
                     if direction:
                         player.move(direction)
-                    if pressed_keys[pygame.K_SPACE]:
-                        if player.cooling_time == 0:
-                            fire_sound.play()
-                            bullet_group.add(player.shot())
-                            player.cooling_time = 20
+                    if pressed_keys[pygame.K_SPACE] and player.cooling_time == 0:
+                        fire_sound.play()
+                        bullet_group.add(player.shot())
+                        player.cooling_time = 20
                 if player.cooling_time > 0:
                     player.cooling_time -= 1
             if (score_1 + score_2) < 500:
@@ -181,8 +179,8 @@ class AircraftWarGame(PygameBaseGame):
                 asteroid.rotate()
                 asteroid.draw(screen)
             # --显示分数
-            score_1_text = '玩家一得分: %s' % score_1
-            score_2_text = '玩家二得分: %s' % score_2
+            score_1_text = f'玩家一得分: {score_1}'
+            score_2_text = f'玩家二得分: {score_2}'
             text_1 = font.render(score_1_text, True, (0, 0, 255))
             text_2 = font.render(score_2_text, True, (255, 0, 0))
             screen.blit(text_1, (2, 5))

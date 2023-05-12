@@ -90,7 +90,11 @@ class BunnyBadgerGame(PygameBaseGame):
                     screen.blit(resource_loader.images['grass'], (x*100, y*100))
             for i in range(4): screen.blit(resource_loader.images['castle'], (0, 30+105*i))
             # --倒计时信息
-            countdown_text = resource_loader.fonts['default'].render(str((90000-pygame.time.get_ticks())//60000)+":"+str((90000-pygame.time.get_ticks())//1000%60).zfill(2), True, (0, 0, 0))
+            countdown_text = resource_loader.fonts['default'].render(
+                f"{str((90000 - pygame.time.get_ticks()) // 60000)}:{str((90000 - pygame.time.get_ticks()) // 1000 % 60).zfill(2)}",
+                True,
+                (0, 0, 0),
+            )
             countdown_rect = countdown_text.get_rect()
             countdown_rect.topright = [635, 5]
             screen.blit(countdown_text, countdown_rect)

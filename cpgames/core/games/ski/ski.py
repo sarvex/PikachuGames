@@ -135,9 +135,9 @@ class SkiGame(PygameBaseGame):
                 if event.type == pygame.QUIT:
                     QuitGame()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    if event.key in [pygame.K_LEFT, pygame.K_a]:
                         speed = skier.turn(-1)
-                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    elif event.key in [pygame.K_RIGHT, pygame.K_d]:
                         speed = skier.turn(1)
             # --更新当前游戏帧的数据
             skier.move()
@@ -155,9 +155,9 @@ class SkiGame(PygameBaseGame):
                 obstacles = self.AddObstacles(obstacles0, obstacles1)
             for obstacle in obstacles:
                 obstacle.move(distance)
-            # --碰撞检测
-            hitted_obstacles = pygame.sprite.spritecollide(skier, obstacles, False)
-            if hitted_obstacles:
+            if hitted_obstacles := pygame.sprite.spritecollide(
+                skier, obstacles, False
+            ):
                 if hitted_obstacles[0].attribute == "tree" and not hitted_obstacles[0].passed:
                     score -= 50
                     skier.setFall()
@@ -176,7 +176,7 @@ class SkiGame(PygameBaseGame):
     def createObstacles(self, s, e, num=10):
         obstacles = pygame.sprite.Group()
         locations = []
-        for i in range(num):
+        for _ in range(num):
             row = random.randint(s, e)
             col = random.randint(0, 9)
             location  = [col * 64 + 20, row * 64 + 20]
@@ -218,7 +218,7 @@ class SkiGame(PygameBaseGame):
     '''显示分数'''
     def showScore(self, screen, score, pos=(10, 10)):
         font = self.resource_loader.fonts['default']
-        score_text = font.render("Score: %s" % score, True, (0, 0, 0))
+        score_text = font.render(f"Score: {score}", True, (0, 0, 0))
         screen.blit(score_text, pos)
     '''更新当前帧的游戏画面'''
     def updateFrame(self, screen, obstacles, skier, score):

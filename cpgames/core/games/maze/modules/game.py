@@ -121,6 +121,7 @@ class RandomMaze():
                             block_now.has_walls[3] = False
                         break
             return block_next
+
         blocks_list = [[Block([col, row], block_size, border_size) for col in range(maze_size[1])] for row in range(maze_size[0])]
         block_now = blocks_list[0][0]
         records = []
@@ -132,6 +133,6 @@ class RandomMaze():
                 block_now = nextBlock(block_now, blocks_list)
             else:
                 block_now = records.pop()
-                if len(records) == 0:
+                if not records:
                     break
         return blocks_list

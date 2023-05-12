@@ -72,9 +72,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.left += self.speed[0]
         self.rect.top += self.speed[1]
         is_collide = pygame.sprite.spritecollide(self, wall_sprites, False)
-        if gate_sprites is not None:
-            if not is_collide:
-                is_collide = pygame.sprite.spritecollide(self, gate_sprites, False)
+        if gate_sprites is not None and not is_collide:
+            is_collide = pygame.sprite.spritecollide(self, gate_sprites, False)
         if is_collide:
             self.rect.left = x_prev
             self.rect.top = y_prev

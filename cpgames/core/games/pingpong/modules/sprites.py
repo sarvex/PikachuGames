@@ -85,7 +85,9 @@ class Racket(pygame.sprite.Sprite):
         elif direction == 'DOWN':
             self.rect.bottom = min(self.cfg.SCREENSIZE[1], self.rect.bottom + self.speed)
         else:
-            raise ValueError('[direction] in Racket.move is %s, expect %s or %s...' % (direction, 'UP', 'DOWN'))
+            raise ValueError(
+                f'[direction] in Racket.move is {direction}, expect UP or DOWN...'
+            )
     '''电脑自动移动'''
     def automove(self, ball):
         if ball.rect.centery - 25 > self.rect.centery:

@@ -36,6 +36,9 @@ class Bullet(pygame.sprite.Sprite):
             self.rect = self.rect.move(-self.speed, 0)
         elif self.direction == 'right':
             self.rect = self.rect.move(self.speed, 0)
-        if (self.rect.top < self.border_len) or (self.rect.bottom > self.height) or (self.rect.left < self.border_len) or (self.rect.right > self.width):
-            return True
-        return False
+        return (
+            self.rect.top < self.border_len
+            or self.rect.bottom > self.height
+            or self.rect.left < self.border_len
+            or self.rect.right > self.width
+        )

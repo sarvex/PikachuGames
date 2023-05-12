@@ -17,11 +17,19 @@ class Cactus(pygame.sprite.Sprite):
         # 导入图片
         self.images = []
         image = images[0]
-        for i in range(3):
-            self.images.append(pygame.transform.scale(image.subsurface((i*101, 0), (101, 101)), sizes[0]))
+        self.images.extend(
+            pygame.transform.scale(
+                image.subsurface((i * 101, 0), (101, 101)), sizes[0]
+            )
+            for i in range(3)
+        )
         image = images[1]
-        for i in range(3):
-            self.images.append(pygame.transform.scale(image.subsurface((i*68, 0), (68, 70)), sizes[1]))
+        self.images.extend(
+            pygame.transform.scale(
+                image.subsurface((i * 68, 0), (68, 70)), sizes[1]
+            )
+            for i in range(3)
+        )
         self.image = random.choice(self.images)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.bottom = position
@@ -44,8 +52,10 @@ class Ptera(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         # 导入图片
         self.images = []
-        for i in range(2):
-            self.images.append(pygame.transform.scale(image.subsurface((i*92, 0), (92, 81)), size))
+        self.images.extend(
+            pygame.transform.scale(image.subsurface((i * 92, 0), (92, 81)), size)
+            for i in range(2)
+        )
         self.image_idx = 0
         self.image = self.images[self.image_idx]
         self.rect = self.image.get_rect()

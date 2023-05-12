@@ -45,8 +45,8 @@ def drawScore(screen, score, max_score, cfg):
     font_color = (255, 255, 255)
     font_size = 30
     font = pygame.font.Font(cfg.FONTPATH, font_size)
-    text_max_score = font.render('Best: %s' % max_score, True, font_color)
-    text_score = font.render('Score: %s' % score, True, font_color)
+    text_max_score = font.render(f'Best: {max_score}', True, font_color)
+    text_score = font.render(f'Score: {score}', True, font_color)
     start_x = cfg.BLOCK_SIZE * cfg.GAME_MATRIX_SIZE[1] + cfg.MARGIN_SIZE * (cfg.GAME_MATRIX_SIZE[1] + 1)
     screen.blit(text_max_score, (start_x+10, 10))
     screen.blit(text_score, (start_x+10, 20+text_score.get_rect().height))

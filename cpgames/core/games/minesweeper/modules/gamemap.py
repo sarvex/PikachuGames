@@ -51,7 +51,7 @@ class MinesweeperMap():
             self.mouse_pressed = mouse_pressed
         # 鼠标点击的范围不在游戏地图内, 无响应
         if self.mouse_pos[0] < self.cfg.BORDERSIZE or self.mouse_pos[0] > self.cfg.SCREENSIZE[0] - self.cfg.BORDERSIZE or \
-           self.mouse_pos[1] < self.cfg.GRIDSIZE * 2 or self.mouse_pos[1] > self.cfg.SCREENSIZE[1] - self.cfg.BORDERSIZE:
+               self.mouse_pos[1] < self.cfg.GRIDSIZE * 2 or self.mouse_pos[1] > self.cfg.SCREENSIZE[1] - self.cfg.BORDERSIZE:
             return
         # 鼠标点击在游戏地图内, 代表开始游戏(即可以开始计时了)
         if self.status_code == -1:
@@ -66,44 +66,43 @@ class MinesweeperMap():
         # 鼠标按下
         if type_ == 'down':
             # --鼠标左右键同时按下
-            if self.mouse_pressed[0] and self.mouse_pressed[2]:
-                if mine_clicked.opened and mine_clicked.num_mines_around > 0:
-                    mine_clicked.setstatus(status_code=4)
-                    num_flags = 0
-                    coords_around = self.getaround(coord_y, coord_x)
-                    for (j, i) in coords_around:
-                        if self.mines_matrix[j][i].status_code == 2:
-                            num_flags += 1
-                    if num_flags == mine_clicked.num_mines_around:
-                        for (j, i) in coords_around:
-                            if self.mines_matrix[j][i].status_code == 0:
-                                self.openmine(i, j)
-                    else:
-                        for (j, i) in coords_around:
-                            if self.mines_matrix[j][i].status_code == 0:
-                                self.mines_matrix[j][i].setstatus(status_code=5)
-        # 鼠标释放
-        else:
-            # --鼠标左键
-            if self.mouse_pressed[0] and not self.mouse_pressed[2]:
-                if not (mine_clicked.status_code == 2 or mine_clicked.status_code == 3):
-                    if self.openmine(coord_x, coord_y):
-                        self.setstatus(status_code=1)
-            # --鼠标右键
-            elif self.mouse_pressed[2] and not self.mouse_pressed[0]:
-                if mine_clicked.status_code == 0:
-                    mine_clicked.setstatus(status_code=2)
-                elif mine_clicked.status_code == 2:
-                    mine_clicked.setstatus(status_code=3)
-                elif mine_clicked.status_code == 3:
-                    mine_clicked.setstatus(status_code=0)
-            # --鼠标左右键同时按下
-            elif self.mouse_pressed[0] and self.mouse_pressed[2]:
-                mine_clicked.setstatus(status_code=1)
+            if (
+                self.mouse_pressed[0]
+                and self.mouse_pressed[2]
+                and mine_clicked.opened
+                and mine_clicked.num_mines_around > 0
+            ):
+                mine_clicked.setstatus(status_code=4)
                 coords_around = self.getaround(coord_y, coord_x)
-                for (j, i) in coords_around:
-                    if self.mines_matrix[j][i].status_code == 5:
-                        self.mines_matrix[j][i].setstatus(status_code=0)
+                num_flags = sum(
+                    1
+                    for j, i in coords_around
+                    if self.mines_matrix[j][i].status_code == 2
+                )
+                for j, i in coords_around:
+                    if self.mines_matrix[j][i].status_code == 0:
+                        if num_flags == mine_clicked.num_mines_around:
+                            self.openmine(i, j)
+                        else:
+                            self.mines_matrix[j][i].setstatus(status_code=5)
+        elif self.mouse_pressed[0] and not self.mouse_pressed[2]:
+            if mine_clicked.status_code not in [2, 3] and self.openmine(
+                coord_x, coord_y
+            ):
+                self.setstatus(status_code=1)
+        elif self.mouse_pressed[2] and not self.mouse_pressed[0]:
+            if mine_clicked.status_code == 0:
+                mine_clicked.setstatus(status_code=2)
+            elif mine_clicked.status_code == 2:
+                mine_clicked.setstatus(status_code=3)
+            elif mine_clicked.status_code == 3:
+                mine_clicked.setstatus(status_code=0)
+        elif self.mouse_pressed[0]:
+            mine_clicked.setstatus(status_code=1)
+            coords_around = self.getaround(coord_y, coord_x)
+            for (j, i) in coords_around:
+                if self.mines_matrix[j][i].status_code == 5:
+                    self.mines_matrix[j][i].setstatus(status_code=0)
     '''打开雷'''
     def openmine(self, x, y):
         mine_clicked = self.mines_matrix[y][x]
@@ -118,9 +117,9 @@ class MinesweeperMap():
             return True
         mine_clicked.setstatus(status_code=1)
         coords_around = self.getaround(y, x)
-        num_mines = 0
-        for (j, i) in coords_around:
-            num_mines += int(self.mines_matrix[j][i].is_mine_flag)
+        num_mines = sum(
+            int(self.mines_matrix[j][i].is_mine_flag) for j, i in coords_around
+        )
         mine_clicked.setnumminesaround(num_mines)
         if num_mines == 0:
             for (j, i) in coords_around:
@@ -131,10 +130,14 @@ class MinesweeperMap():
     def getaround(self, row, col):
         coords = []
         for j in range(max(0, row-1), min(row+1, self.cfg.GAME_MATRIX_SIZE[1]-1)+1):
-            for i in range(max(0, col-1), min(col+1, self.cfg.GAME_MATRIX_SIZE[0]-1)+1):
-                if j == row and i == col:
-                    continue
-                coords.append((j, i))
+            coords.extend(
+                (j, i)
+                for i in range(
+                    max(0, col - 1),
+                    min(col + 1, self.cfg.GAME_MATRIX_SIZE[0] - 1) + 1,
+                )
+                if j != row or i != col
+            )
         return coords
     '''是否正在游戏中'''
     @property

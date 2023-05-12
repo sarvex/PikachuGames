@@ -125,7 +125,7 @@ class TwentyfourPointGame(PygameBaseGame):
                         elif each.select_order == '2':
                             selected_number2 = each.attribute
                         else:
-                            raise ValueError('Unknow select_order %s, expect 1 or 2...' % each.select_order)
+                            raise ValueError(f'Unknow select_order {each.select_order}, expect 1 or 2...')
                     else:
                         noselected_numbers.append(each.attribute)
                     each.is_selected = False
@@ -169,31 +169,26 @@ class TwentyfourPointGame(PygameBaseGame):
     def checkClicked(self, group, mouse_pos, group_type='NUMBER'):
         selected = []
         # 数字卡片/运算符卡片
-        if group_type == self.cfg.GROUPTYPES[0] or group_type == self.cfg.GROUPTYPES[1]:
+        if group_type in [self.cfg.GROUPTYPES[0], self.cfg.GROUPTYPES[1]]:
             max_selected = 2 if group_type == self.cfg.GROUPTYPES[0] else 1
-            num_selected = 0
-            for each in group:
-                num_selected += int(each.is_selected)
+            num_selected = sum(int(each.is_selected) for each in group)
             for each in group:
                 if each.rect.collidepoint(mouse_pos):
                     if each.is_selected:
                         each.is_selected = not each.is_selected
                         num_selected -= 1
                         each.select_order = None
-                    else:
-                        if num_selected < max_selected:
-                            each.is_selected = not each.is_selected
-                            num_selected += 1
-                            each.select_order = str(num_selected)
+                    elif num_selected < max_selected:
+                        each.is_selected = not each.is_selected
+                        num_selected += 1
+                        each.select_order = str(num_selected)
                 if each.is_selected:
                     selected.append(each.attribute)
-        # 按钮卡片
         elif group_type == self.cfg.GROUPTYPES[2]:
             for each in group:
                 if each.rect.collidepoint(mouse_pos):
                     each.is_selected = True
                     selected.append(each.attribute)
-        # 抛出异常
         else:
             raise ValueError('checkClicked.group_type unsupport %s, expect %s, %s or %s...' % (group_type, *self.cfg.GROUPTYPES))
         return selected

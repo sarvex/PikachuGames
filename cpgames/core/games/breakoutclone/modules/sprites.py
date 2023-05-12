@@ -26,7 +26,7 @@ class Paddle(pygame.sprite.Sprite):
         elif direction == 'right':
             self.rect.right = min(self.SCREENWIDTH, self.rect.right+self.base_speed)
         else:
-            raise ValueError('Paddle.move.direction unsupport %s...' % direction)
+            raise ValueError(f'Paddle.move.direction unsupport {direction}...')
         return True
     '''绑定到屏幕上'''
     def draw(self, screen, color):

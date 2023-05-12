@@ -60,16 +60,15 @@ class MapParser():
     def parse(self, filepath):
         map_matrix = []
         with open(filepath, 'r') as fp:
-            for line in fp.readlines():
-                line = line.strip()
-                if not line: continue
-                map_matrix.append([c.strip() for c in line.split(',')])
+            for line in fp:
+                if line := line.strip():
+                    map_matrix.append([c.strip() for c in line.split(',')])
         return map_matrix
     '''获得所有怪物信息'''
     def getallmonsters(self):
         monsters = []
-        for row_idx, row in enumerate(self.map_matrix):
-            for col_idx, elem in enumerate(row):
+        for row in self.map_matrix:
+            for elem in row:
                 if elem in self.monsters_dict:
                     monster = list(self.monsters_dict[elem])
                     monster.append(elem)
@@ -80,10 +79,9 @@ class MapParser():
         assert pos_type in ['pixel', 'block']
         for row_idx, row in enumerate(self.map_matrix):
             for col_idx, elem in enumerate(row):
-                position = col_idx * self.blocksize + self.offset[0], row_idx * self.blocksize + self.offset[1]
                 if elem == 'hero':
-                    if pos_type == 'pixel': return position
-                    else: return (col_idx, row_idx)
+                    position = col_idx * self.blocksize + self.offset[0], row_idx * self.blocksize + self.offset[1]
+                    return position if pos_type == 'pixel' else (col_idx, row_idx)
         return None
     '''将游戏地图画到屏幕上'''
     def draw(self, screen):

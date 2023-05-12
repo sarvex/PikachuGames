@@ -231,11 +231,12 @@ class FlipCardByMemoryGame():
         # 之前没有卡片被翻开
         if len(self.shown_cards) == 0:
             self.shown_cards.append(card)
-            image = ImageTk.PhotoImage(Image.open(os.path.join(self.card_dir, card.file+'.png')))
+            image = ImageTk.PhotoImage(
+                Image.open(os.path.join(self.card_dir, f'{card.file}.png'))
+            )
             card.configure(image=image)
             card.show_image = image
             card.show = True
-        # 之前只有一张卡片被翻开
         elif len(self.shown_cards) == 1:
             # --之前翻开的卡片和现在的卡片一样
             if self.shown_cards[0].file == card.file:
@@ -246,20 +247,23 @@ class FlipCardByMemoryGame():
                     card.blank_image = self.blank_image
                     self.shown_cards.pop(0)
                     self.score_sound.play()
+
                 self.num_existing_cards -= 2
-                image = ImageTk.PhotoImage(Image.open(os.path.join(self.card_dir, card.file+'.png')))
+                image = ImageTk.PhotoImage(
+                    Image.open(os.path.join(self.card_dir, f'{card.file}.png'))
+                )
                 card.configure(image=image)
                 card.show_image = image
                 card.show = True
                 card.after(300, delaycallback)
-            # --之前翻开的卡片和现在的卡片不一样
             else:
                 self.shown_cards.append(card)
-                image = ImageTk.PhotoImage(Image.open(os.path.join(self.card_dir, card.file+'.png')))
+                image = ImageTk.PhotoImage(
+                    Image.open(os.path.join(self.card_dir, f'{card.file}.png'))
+                )
                 card.configure(image=image)
                 card.show_image = image
                 card.show = True
-        # 之前有两张卡片被翻开
         elif len(self.shown_cards) == 2:
             # --之前翻开的第一张卡片和现在的卡片一样
             if self.shown_cards[0].file == card.file:
@@ -270,13 +274,15 @@ class FlipCardByMemoryGame():
                     card.blank_image = self.blank_image
                     self.shown_cards.pop(0)
                     self.score_sound.play()
+
                 self.num_existing_cards -= 2
-                image = ImageTk.PhotoImage(Image.open(os.path.join(self.card_dir, card.file+'.png')))
+                image = ImageTk.PhotoImage(
+                    Image.open(os.path.join(self.card_dir, f'{card.file}.png'))
+                )
                 card.configure(image=image)
                 card.show_image = image
                 card.show = True
                 card.after(300, delaycallback)
-            # --之前翻开的第二张卡片和现在的卡片一样
             elif self.shown_cards[1].file == card.file:
                 def delaycallback():
                     self.shown_cards[1].configure(image=self.blank_image)
@@ -285,19 +291,23 @@ class FlipCardByMemoryGame():
                     card.blank_image = self.blank_image
                     self.shown_cards.pop(1)
                     self.score_sound.play()
+
                 self.num_existing_cards -= 2
-                image = ImageTk.PhotoImage(Image.open(os.path.join(self.card_dir, card.file+'.png')))
+                image = ImageTk.PhotoImage(
+                    Image.open(os.path.join(self.card_dir, f'{card.file}.png'))
+                )
                 card.configure(image=image)
                 card.show_image = image
                 card.show = True
                 card.after(300, delaycallback)
-            # --之前翻开的卡片和现在的卡片都不一样
             else:
                 self.shown_cards.append(card)
                 self.shown_cards[0].configure(image=self.cards_back_image)
                 self.shown_cards[0].show = False
                 self.shown_cards.pop(0)
-                image = ImageTk.PhotoImage(Image.open(os.path.join(self.card_dir, card.file+'.png')))
+                image = ImageTk.PhotoImage(
+                    Image.open(os.path.join(self.card_dir, f'{card.file}.png'))
+                )
                 self.shown_cards[-1].configure(image=image)
                 self.shown_cards[-1].show_image = image
                 self.shown_cards[-1].show = True
@@ -319,10 +329,12 @@ class FlipCardByMemoryGame():
             self.num_seconds -= 1
             self.time['text'] = f'Time Left: {self.num_seconds}'
             self.time.after(1000, self.tick)
-        else:
-            is_restart = messagebox.askyesno('Game Over', 'You fail since time up, do you want to play again?')
+        elif is_restart := messagebox.askyesno(
+            'Game Over', 'You fail since time up, do you want to play again?'
+        ):
             if is_restart: self.restart()
-            else: self.root.destroy()
+        else:
+            self.root.destroy()
     '''重新开始游戏'''
     def restart(self):
         self.root.destroy()

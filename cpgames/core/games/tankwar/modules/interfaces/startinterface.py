@@ -48,7 +48,12 @@ def GameStartInterface(screen, cfg, resource_loader):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     return is_dual_mode
-                elif event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_w or event.key == pygame.K_s:
+                elif event.key in [
+                    pygame.K_UP,
+                    pygame.K_DOWN,
+                    pygame.K_w,
+                    pygame.K_s,
+                ]:
                     is_dual_mode = not is_dual_mode
         screen.blit(background_img, (0, 0))
         screen.blit(logo_img, logo_rect)

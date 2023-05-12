@@ -225,14 +225,11 @@ class ChoiceInterface():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     QuitGame()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        mouse_pos = pygame.mouse.get_pos()
-                        idx = 0
-                        for btn in self.map_btns:
-                            idx += 1
-                            if btn.rect.collidepoint(mouse_pos):
-                                map_choice = idx
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    mouse_pos = pygame.mouse.get_pos()
+                    for idx, btn in enumerate(self.map_btns, start=1):
+                        if btn.rect.collidepoint(mouse_pos):
+                            map_choice = idx
             if map_choice:
                 break
         # part2
@@ -246,14 +243,11 @@ class ChoiceInterface():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     QuitGame()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        mouse_pos = pygame.mouse.get_pos()
-                        idx = 0
-                        for btn in self.difficulty_btns:
-                            idx += 1
-                            if btn.rect.collidepoint(mouse_pos):
-                                difficulty_choice = btn.text
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    mouse_pos = pygame.mouse.get_pos()
+                    for btn in self.difficulty_btns:
+                        if btn.rect.collidepoint(mouse_pos):
+                            difficulty_choice = btn.text
             if difficulty_choice:
                 break
         return map_choice, difficulty_choice

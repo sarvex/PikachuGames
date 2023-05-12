@@ -6,6 +6,7 @@ Author:
 微信公众号:
     Charles的皮卡丘
 '''
+
 import os
 import random
 import pygame
@@ -14,7 +15,9 @@ from ..base import PygameBaseGame
 
 
 '''配置类'''
-class Config():
+
+
+class Config:
     # 根目录
     rootdir = os.path.split(os.path.abspath(__file__))[0]
     # FPS
@@ -30,16 +33,17 @@ class Config():
     SCREENSIZE = (640, 640)
     # 标题
     TITLE = '拼图小游戏 —— Charles的皮卡丘'
-    # 游戏图片路径
-    IMAGE_PATHS_DICT = {}
-    for item in os.listdir(os.path.join(rootdir, 'resources/images')):
-        IMAGE_PATHS_DICT[item] = os.path.join(rootdir, f'resources/images/{item}')
+    IMAGE_PATHS_DICT = {
+        item: os.path.join(rootdir, f'resources/images/{item}')
+        for item in os.listdir(os.path.join(rootdir, 'resources/images'))
+    }
     # 字体路径
     FONT_PATHS_DICT = {
         '1/4screenwidth': {'name': os.path.join(rootdir.replace('puzzlepieces', 'base'), 'resources/fonts/simkai.ttf'), 'size': SCREENSIZE[0] // 4},
         '1/15screenwidth': {'name': os.path.join(rootdir.replace('puzzlepieces', 'base'), 'resources/fonts/simkai.ttf'), 'size': SCREENSIZE[0] // 15},
         '1/20screenwidth': {'name': os.path.join(rootdir.replace('puzzlepieces', 'base'), 'resources/fonts/simkai.ttf'), 'size': SCREENSIZE[0] // 20},
     }
+
 
 
 '''拼图小游戏'''
@@ -79,17 +83,15 @@ class PuzzlePiecesGame(PygameBaseGame):
                 # ----退出游戏
                 if (event.type == pygame.QUIT) or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     QuitGame()
-                # ----键盘操作
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT or event.key == ord('a'):
+                    if event.key in [pygame.K_LEFT, ord('a')]:
                         blank_cell_idx = self.moveL(game_board, blank_cell_idx, num_cols)
-                    elif event.key == pygame.K_RIGHT or event.key == ord('d'):
+                    elif event.key in [pygame.K_RIGHT, ord('d')]:
                         blank_cell_idx = self.moveR(game_board, blank_cell_idx, num_cols)
-                    elif event.key == pygame.K_UP or event.key == ord('w'):
+                    elif event.key in [pygame.K_UP, ord('w')]:
                         blank_cell_idx = self.moveU(game_board, blank_cell_idx, num_rows, num_cols)
-                    elif event.key == pygame.K_DOWN or event.key == ord('s'):
+                    elif event.key in [pygame.K_DOWN, ord('s')]:
                         blank_cell_idx = self.moveD(game_board, blank_cell_idx, num_cols)
-                # ----鼠标操作
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     x, y = pygame.mouse.get_pos()
                     x_pos = x // cell_width
@@ -129,9 +131,7 @@ class PuzzlePiecesGame(PygameBaseGame):
     def isGameOver(self, board, size):
         assert isinstance(size, int)
         num_cells = size * size
-        for i in range(num_cells-1):
-            if board[i] != i: return False
-        return True
+        return all(board[i] == i for i in range(num_cells-1))
     '''将空白Cell左边的Cell右移到空白Cell位置'''
     def moveR(self, board, blank_cell_idx, num_cols):
         if blank_cell_idx % num_cols == 0: return blank_cell_idx
@@ -154,12 +154,11 @@ class PuzzlePiecesGame(PygameBaseGame):
         return blank_cell_idx + num_cols
     '''获得打乱的拼图'''
     def CreateBoard(self, num_rows, num_cols, num_cells):
-        board = []
-        for i in range(num_cells): board.append(i)
+        board = list(range(num_cells))
         # 去掉右下角那块
         blank_cell_idx = num_cells - 1
         board[blank_cell_idx] = -1
-        for i in range(self.cfg.NUMRANDOM):
+        for _ in range(self.cfg.NUMRANDOM):
             # 0: left, 1: right, 2: up, 3: down
             direction = random.randint(0, 3)
             if direction == 0: blank_cell_idx = self.moveL(board, blank_cell_idx, num_cols)

@@ -94,8 +94,11 @@ class FlappyBirdGame(PygameBaseGame):
             number_images = resource_loader.images['number']
             for key in number_images: number_images[key] = number_images[key].convert_alpha()
             # --管道
-            pipe_images = dict()
-            pipe_images['bottom'] = random.choice(list(resource_loader.images['pipe'].values())).convert_alpha()
+            pipe_images = {
+                'bottom': random.choice(
+                    list(resource_loader.images['pipe'].values())
+                ).convert_alpha()
+            }
             pipe_images['top'] = pygame.transform.rotate(pipe_images['bottom'], 180)
             # --小鸟图片
             bird_images = random.choice(list(resource_loader.images['bird'].values()))
@@ -129,7 +132,7 @@ class FlappyBirdGame(PygameBaseGame):
                     if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                         QuitGame()
                     elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                        if event.key in [pygame.K_SPACE, pygame.K_UP]:
                             bird.setFlapped()
                             sounds['wing'].play()
                 # --碰撞检测
@@ -139,8 +142,9 @@ class FlappyBirdGame(PygameBaseGame):
                         is_game_running = False
                 # --更新小鸟
                 boundary_values = [0, base_pos[-1]]
-                is_dead = bird.update(boundary_values, float(clock.tick(cfg.FPS))/1000.)
-                if is_dead:
+                if is_dead := bird.update(
+                    boundary_values, float(clock.tick(cfg.FPS)) / 1000.0
+                ):
                     sounds['hit'].play()
                     is_game_running = False
                 # --移动base实现小鸟往前飞的效果
@@ -176,9 +180,7 @@ class FlappyBirdGame(PygameBaseGame):
     @staticmethod
     def showScore(cfg, screen, score, number_images):
         digits = list(str(int(score)))
-        width = 0
-        for d in digits:
-            width += number_images.get(d).get_width()
+        width = sum(number_images.get(d).get_width() for d in digits)
         offset = (cfg.SCREENSIZE[0] - width) / 2
         for d in digits:
             screen.blit(number_images.get(d), (offset, cfg.SCREENSIZE[1] * 0.1))

@@ -77,10 +77,7 @@ class aircraftSprite(pygame.sprite.Sprite):
                 x = self.boomed_filled_cells[i] % self.boomed_num_cols
                 rect = [x * self.boomed_cell[0] + self.boomed_rect[0], y * self.boomed_cell[1] + self.boomed_rect[1], self.boomed_cell[0], self.boomed_cell[1]]
                 pygame.draw.rect(screen, self.color, rect)
-        if self.boomed_frame > 4:
-            return True
-        else:
-            return False
+        return self.boomed_frame > 4
     '''重置爆炸所用到的数据'''
     def resetBoom(self):
         # 被击中爆炸时用
@@ -133,10 +130,7 @@ class ufoSprite(pygame.sprite.Sprite):
                 x = self.boomed_filled_cells[i] % self.boomed_num_cols
                 rect = [x * self.boomed_cell[0] + self.boomed_rect[0], y * self.boomed_cell[1] + self.boomed_rect[1], self.boomed_cell[0], self.boomed_cell[1]]
                 pygame.draw.rect(screen, self.color, rect)
-        if self.boomed_frame > 4:
-            return True
-        else:
-            return False
+        return self.boomed_frame > 4
     '''重置'''
     def reset(self):
         self.cell = [3, 3]
@@ -226,16 +220,13 @@ class enemySprite(pygame.sprite.Sprite):
         # 用于改变形状
         self.change_count += 1
         # 更新位置信息
-        if direction == 'right':
-            self.rect.x += self.speed[0]
+        if direction == 'down':
+            self.rect.y += self.speed[1]
         elif direction == 'left':
             self.rect.x -= self.speed[0]
-        elif direction == 'down':
-            self.rect.y += self.speed[1]
-        if self.rect.y >= HEIGHT - self.rect.height:
-            return True
-        else:
-            return False
+        elif direction == 'right':
+            self.rect.x += self.speed[0]
+        return self.rect.y >= HEIGHT - self.rect.height
     '''被击中后爆炸'''
     def boom(self, screen):
         self.boomed_rect.x = self.rect.x
@@ -248,10 +239,7 @@ class enemySprite(pygame.sprite.Sprite):
                 x = self.boomed_filled_cells[i] % self.boomed_num_cols
                 rect = [x * self.boomed_cell[0] + self.boomed_rect[0], y * self.boomed_cell[1] + self.boomed_rect[1], self.boomed_cell[0], self.boomed_cell[1]]
                 pygame.draw.rect(screen, self.color, rect)
-        if self.boomed_frame > 4:
-            return True
-        else:
-            return False
+        return self.boomed_frame > 4
 
 
 '''我方子弹精灵类'''
@@ -275,10 +263,7 @@ class myBulletSprite(pygame.sprite.Sprite):
     '''更新子弹位置等信息'''
     def update(self):
         self.rect.y -= self.speed
-        if self.rect.y + self.rect.height < 0:
-            return True
-        else:
-            return False
+        return self.rect.y + self.rect.height < 0
 
 
 '''敌方子弹精灵类'''
@@ -318,7 +303,4 @@ class enemyBulletSprite(pygame.sprite.Sprite):
         self.change_count += 1
         # 位置信息
         self.rect.y += self.speed
-        if self.rect.y > HEIGHT:
-            return True
-        else:
-            return False
+        return self.rect.y > HEIGHT

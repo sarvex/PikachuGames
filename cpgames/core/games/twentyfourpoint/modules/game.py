@@ -58,7 +58,9 @@ class Button(Card):
             self.text = '[%d/%d]: ' % (game24_gen.answers_idx+1, len(game24_gen.answers)) + game24_gen.answers[game24_gen.answers_idx]
             game24_gen.answers_idx = (game24_gen.answers_idx+1) % len(game24_gen.answers)
         else:
-            raise ValueError('Button.attribute unsupport %s, expect %s, %s or %s...' % (self.attribute, 'NEXT', 'RESET', 'ANSWERS'))
+            raise ValueError(
+                f'Button.attribute unsupport {self.attribute}, expect NEXT, RESET or ANSWERS...'
+            )
         return sprites_group
 
 
@@ -70,16 +72,14 @@ class game24Generator():
     def generate(self):
         self.__reset()
         while True:
-            self.numbers_ori = [random.randint(1, 10) for i in range(4)]
+            self.numbers_ori = [random.randint(1, 10) for _ in range(4)]
             self.numbers_now = copy.deepcopy(self.numbers_ori)
             self.answers = self.__verify()
             if self.answers:
                 break
     '''只剩下一个数字时检查是否为24'''
     def check(self):
-        if len(self.numbers_now) == 1 and float(self.numbers_now[0]) == self.target:
-            return True
-        return False
+        return len(self.numbers_now) == 1 and float(self.numbers_now[0]) == self.target
     '''重置'''
     def __reset(self):
         self.answers = []
@@ -95,15 +95,15 @@ class game24Generator():
             list(map(lambda i: item_dict.append({str(i): i}), item))
             solution1 = self.__func(self.__func(self.__func(item_dict[0], item_dict[1]), item_dict[2]), item_dict[3])
             solution2 = self.__func(self.__func(item_dict[0], item_dict[1]), self.__func(item_dict[2], item_dict[3]))
-            solution = dict()
-            solution.update(solution1)
+            solution = {}
+            solution |= solution1
             solution.update(solution2)
-            for key, value in solution.items():
-                if float(value) == self.target:
-                    answers.append(key)
-        # 避免有数字重复时表达式重复(T_T懒得优化了)
-        answers = list(set(answers))
-        return answers
+            answers.extend(
+                key
+                for key, value in solution.items()
+                if float(value) == self.target
+            )
+        return list(set(answers))
     '''递归枚举'''
     def __iter(self, items, n):
         for idx, item in enumerate(items):
@@ -114,13 +114,13 @@ class game24Generator():
                     yield [item] + each
     '''计算函数'''
     def __func(self, a, b):
-        res = dict()
+        res = {}
         for key1, value1 in a.items():
             for key2, value2 in b.items():
-                res.update({'('+key1+'+'+key2+')': value1+value2})
-                res.update({'('+key1+'-'+key2+')': value1-value2})
-                res.update({'('+key2+'-'+key1+')': value2-value1})
-                res.update({'('+key1+'×'+key2+')': value1*value2})
-                value2 > 0 and res.update({'('+key1+'÷'+key2+')': value1/value2})
-                value1 > 0 and res.update({'('+key2+'÷'+key1+')': value2/value1})
+                res[f'({key1}+{key2})'] = value1+value2
+                res[f'({key1}-{key2})'] = value1-value2
+                res[f'({key2}-{key1})'] = value2-value1
+                res[f'({key1}×{key2})'] = value1*value2
+                value2 > 0 and res.update({f'({key1}÷{key2})': value1/value2})
+                value1 > 0 and res.update({f'({key2}÷{key1})': value2/value1})
         return res

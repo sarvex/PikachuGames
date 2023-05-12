@@ -61,18 +61,21 @@ class Ball(pygame.sprite.Sprite):
         vector[0] = vector[0] / math.pow(self.direction[0] ** 2 + self.direction[1] ** 2, 0.5)
         vector[1] = vector[1] / math.pow(self.direction[0] ** 2 + self.direction[1] ** 2, 0.5)
         self.rect.left = min(max(0, self.rect.left + vector[0]), screen_size[0] - 48)
-        if self.rect.left == 0 or self.rect.left == screen_size[0] - 48: 
+        if self.rect.left in [0, screen_size[0] - 48]: 
             self.direction = self.direction[0] * -0.8, self.direction[1]
         self.rect.top = min(max(0, self.rect.top + vector[1]), screen_size[1] - 48)
-        if ori_position[1] > 1121 or ori_position[0] < 75:
-            if self.rect.bottom > 305 and self.rect.top < 505:
-                if self.direction[1] > 0:
-                    self.rect.bottom = 305
-                    self.direction = self.direction[0], self.direction[1] * -0.8
-                elif self.direction[1] < 0:
-                    self.rect.top = 505
-                    self.direction = self.direction[0], self.direction[1] * -0.8
-        if self.rect.top == 0 or self.rect.top == screen_size[1] - 48:
+        if (
+            (ori_position[1] > 1121 or ori_position[0] < 75)
+            and self.rect.bottom > 305
+            and self.rect.top < 505
+        ):
+            if self.direction[1] > 0:
+                self.rect.bottom = 305
+                self.direction = self.direction[0], self.direction[1] * -0.8
+            elif self.direction[1] < 0:
+                self.rect.top = 505
+                self.direction = self.direction[0], self.direction[1] * -0.8
+        if self.rect.top in [0, screen_size[1] - 48]:
             self.direction = self.direction[0], self.direction[1] * -0.8
     '''设置方向'''
     def setdirection(self, direction):

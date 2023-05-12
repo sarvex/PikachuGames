@@ -182,7 +182,7 @@ class PlayerTank(pygame.sprite.Sprite):
             self.tank_image = self.player_tank_images[self.tanklevel].convert_alpha()
             self.setDirection(self.direction)
             self.image = self.tank_direction_image.subsurface((48*int(self.switch_pointer), 0), (48, 48))
-        return True if self.tanklevel < 0 else False
+        return self.tanklevel < 0
     '''增加生命值'''
     def addLife(self):
         self.num_lifes += 1
@@ -283,30 +283,27 @@ class EnemyTank(pygame.sprite.Sprite):
         self.speed = 10 - int(self.tanktype) * 2
     '''射击'''
     def shoot(self):
-        if not self.is_bullet_cooling:
-            self.is_bullet_cooling = True
-            if self.tanklevel == 0:
-                is_stronger = False
-                speed = 8
-            elif self.tanklevel == 1:
-                is_stronger = False
-                speed = 10
-            elif self.tanklevel >= 2:
-                is_stronger = False
-                speed = 10
-            if self.direction == 'up':
-                position = (self.rect.centerx, self.rect.top-1)
-            elif self.direction == 'down':
-                position = (self.rect.centerx, self.rect.bottom+1)
-            elif self.direction == 'left':
-                position = (self.rect.left-1, self.rect.centery)
-            elif self.direction == 'right':
-                position = (self.rect.right+1, self.rect.centery)
-            return Bullet(bullet_images=self.bullet_images, screensize=self.screensize, direction=self.direction, position=position, border_len=self.border_len, is_stronger=is_stronger, speed=speed)
-        return False
+        if self.is_bullet_cooling:
+            return False
+        self.is_bullet_cooling = True
+        if self.tanklevel == 0:
+            is_stronger = False
+            speed = 8
+        elif self.tanklevel == 1 or self.tanklevel >= 2:
+            is_stronger = False
+            speed = 10
+        if self.direction == 'down':
+            position = (self.rect.centerx, self.rect.bottom+1)
+        elif self.direction == 'left':
+            position = (self.rect.left-1, self.rect.centery)
+        elif self.direction == 'right':
+            position = (self.rect.right+1, self.rect.centery)
+        elif self.direction == 'up':
+            position = (self.rect.centerx, self.rect.top-1)
+        return Bullet(bullet_images=self.bullet_images, screensize=self.screensize, direction=self.direction, position=position, border_len=self.border_len, is_stronger=is_stronger, speed=speed)
     '''实时更新坦克'''
     def update(self, scene_elems, player_tanks_group, enemy_tanks_group, home):
-        data_return = dict()
+        data_return = {}
         # 死后爆炸
         if self.booming_flag:
             self.image = self.boom_image
@@ -472,7 +469,7 @@ class EnemyTank(pygame.sprite.Sprite):
         self.image = self.tank_direction_image.subsurface((48*int(self.switch_pointer), 0), (48, 48))
         if self.tanklevel < 0:
             self.booming_flag = True
-        return True if self.tanklevel < 0 else False
+        return self.tanklevel < 0
     '''设置静止'''
     def setStill(self):
         self.is_keep_still = True

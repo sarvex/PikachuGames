@@ -35,10 +35,7 @@ class GameLevels():
         else: return status_codes['gaming']
     '''所有元素是否已经静止'''
     def still(self, sprites_list, threshold=0.15):
-        for sprite in sprites_list:
-            if sprite.velocity.magnitude >= threshold:
-                return False
-        return True
+        return all(sprite.velocity.magnitude < threshold for sprite in sprites_list)
     '''碰撞检测'''
     def collision(self, sprite1, sprite2):
         is_collision = False
@@ -159,7 +156,9 @@ class GameLevels():
                     sprite1.rotate_angle = math.pi - sprite1.velocity.angle
                     sprite1.velocity.magnitude *= elasticity
         else:
-            raise TypeError('Unsupport detect the collision of %s and %s...' % (sprite1.type, sprite2.type))
+            raise TypeError(
+                f'Unsupport detect the collision of {sprite1.type} and {sprite2.type}...'
+            )
         return sprite1, sprite2, is_collision
     '''重玩当前关卡'''
     def replay(self):
@@ -194,12 +193,17 @@ class GameLevels():
         clock = pygame.time.Clock()
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if (
+                    event.type != pygame.QUIT
+                    and event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_q
+                    or event.type == pygame.QUIT
+                ):
                     QuitGame()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        QuitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                elif (
+                    event.type != pygame.KEYDOWN
+                    and event.type == pygame.MOUSEBUTTONDOWN
+                ):
                     if replay_btn.selected(): replay_btn.action()
                     if next_btn.selected(): next_btn.action()
                     if quit_btn.selected(): quit_btn.action()
@@ -222,12 +226,17 @@ class GameLevels():
         clock = pygame.time.Clock()
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if (
+                    event.type != pygame.QUIT
+                    and event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_q
+                    or event.type == pygame.QUIT
+                ):
                     QuitGame()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        QuitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                elif (
+                    event.type != pygame.KEYDOWN
+                    and event.type == pygame.MOUSEBUTTONDOWN
+                ):
                     if replay_btn.selected(): replay_btn.action()
                     if quit_btn.selected(): quit_btn.action()
             for component in [replay_btn, quit_btn, failure_label, score_label, charles_label]:
@@ -254,7 +263,7 @@ class GameLevels():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         QuitGame()
-                    if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
+                    if event.key in [pygame.K_p, pygame.K_ESCAPE]:
                         return
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if replay_btn.selected(): replay_btn.action()
@@ -292,7 +301,7 @@ class GameLevels():
                         QuitGame()
                     elif event.key == pygame.K_r:
                         self.start()
-                    elif event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
+                    elif event.key in [pygame.K_p, pygame.K_ESCAPE]:
                         self.pauseinterface()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if birds[0].selected():
@@ -344,11 +353,13 @@ class GameLevels():
                         bird_magnitude_1, block_magnitude_1 = birds[i].velocity.magnitude, blocks[j].velocity.magnitude
                         birds[i], blocks[j], is_collision = self.collision(birds[i], blocks[j])
                         bird_magnitude_2, block_magnitude_2 = birds[i].velocity.magnitude, blocks[j].velocity.magnitude
-                        if is_collision:
-                            if abs(bird_magnitude_1 - bird_magnitude_2) > 2:
-                                if blocks[j] not in blocks_to_remove:
-                                    blocks_to_remove.append(blocks[j])
-                                    blocks[j].setdestroy()
+                        if (
+                            is_collision
+                            and abs(bird_magnitude_1 - bird_magnitude_2) > 2
+                            and blocks[j] not in blocks_to_remove
+                        ):
+                            blocks_to_remove.append(blocks[j])
+                            blocks[j].setdestroy()
             # --判断猪是否撞上猪或者猪撞墙
             for i in range(len(pigs)):
                 pigs[i].move()
@@ -356,14 +367,18 @@ class GameLevels():
                     pig1_magnitude_1, pig2_magnitude_1 = pigs[i].velocity.magnitude, pigs[j].velocity.magnitude
                     pigs[i], pigs[j], is_collision = self.collision(pigs[i], pigs[j])
                     pig1_magnitude_2, pig2_magnitude_2 = pigs[i].velocity.magnitude, pigs[j].velocity.magnitude
-                    if abs(pig1_magnitude_1 - pig1_magnitude_2) > 2:
-                        if pigs[j] not in pigs_to_remove:
-                            pigs_to_remove.append(pigs[j])
-                            pigs[j].setdead()
-                    if abs(pig2_magnitude_1 - pig2_magnitude_2) > 2:
-                        if pigs[i] not in pigs_to_remove:
-                            pigs_to_remove.append(pigs[i])
-                            pigs[i].setdead()
+                    if (
+                        abs(pig1_magnitude_1 - pig1_magnitude_2) > 2
+                        and pigs[j] not in pigs_to_remove
+                    ):
+                        pigs_to_remove.append(pigs[j])
+                        pigs[j].setdead()
+                    if (
+                        abs(pig2_magnitude_1 - pig2_magnitude_2) > 2
+                        and pigs[i] not in pigs_to_remove
+                    ):
+                        pigs_to_remove.append(pigs[i])
+                        pigs[i].setdead()
                 for wall in walls: pigs[i] = self.collision(pigs[i], wall)[0]
                 pigs[i].draw()
             # --判断鸟是否撞到猪或者鸟是否撞到墙
@@ -374,11 +389,13 @@ class GameLevels():
                         bird_magnitude_1, pig_magnitude_1 = birds[i].velocity.magnitude, pigs[j].velocity.magnitude
                         birds[i], pigs[j], is_collision = self.collision(birds[i], pigs[j])
                         bird_magnitude_2, pig_magnitude_2 = birds[i].velocity.magnitude, pigs[j].velocity.magnitude
-                        if is_collision:
-                            if abs(bird_magnitude_2 - bird_magnitude_1) > 2:
-                                if pigs[j] not in pigs_to_remove:
-                                    pigs_to_remove.append(pigs[j])
-                                    pigs[j].setdead()
+                        if (
+                            is_collision
+                            and abs(bird_magnitude_2 - bird_magnitude_1) > 2
+                            and pigs[j] not in pigs_to_remove
+                        ):
+                            pigs_to_remove.append(pigs[j])
+                            pigs[j].setdead()
                 if birds[i].is_loaded: birds[i].projectpath()
                 for wall in walls: birds[i] = self.collision(birds[i], wall)[0]
                 birds[i].draw()
@@ -389,14 +406,18 @@ class GameLevels():
                     blocks[i], blocks[j], is_collision = self.collision(blocks[i], blocks[j])
                     block1_magnitude_2, block2_magnitude_2 = blocks[i].velocity.magnitude, blocks[j].velocity.magnitude
                     if is_collision:
-                        if abs(block1_magnitude_2 - block1_magnitude_1) > 2:
-                            if blocks[j] not in blocks_to_remove:
-                                blocks_to_remove.append(blocks[j])
-                                blocks[j].setdestroy()
-                        if abs(block2_magnitude_2 - block2_magnitude_1) > 2:
-                            if blocks[i] not in blocks_to_remove:
-                                blocks_to_remove.append(blocks[i])
-                                blocks[i].setdestroy()
+                        if (
+                            abs(block1_magnitude_2 - block1_magnitude_1) > 2
+                            and blocks[j] not in blocks_to_remove
+                        ):
+                            blocks_to_remove.append(blocks[j])
+                            blocks[j].setdestroy()
+                        if (
+                            abs(block2_magnitude_2 - block2_magnitude_1) > 2
+                            and blocks[i] not in blocks_to_remove
+                        ):
+                            blocks_to_remove.append(blocks[i])
+                            blocks[i].setdestroy()
                 blocks[i].move()
                 for wall in walls: blocks[i] = self.collision(blocks[i], wall)[0]
                 blocks[i].draw()

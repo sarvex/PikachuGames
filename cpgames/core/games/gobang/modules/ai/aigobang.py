@@ -26,7 +26,7 @@ class AIGobang():
         ]
         self.alpha = -99999999
         self.beta = 99999999
-        self.all_list = [(i, j) for i, j in product(range(19), range(19))]
+        self.all_list = list(product(range(19), range(19)))
     '''外部调用'''
     def act(self, history_record):
         self.ai_list = []
@@ -121,16 +121,17 @@ class AIGobang():
                     position.append(1)
                 else:
                     position.append(0)
-            shape_len5 = tuple(position[0: -1])
+            shape_len5 = tuple(position[:-1])
             shape_len6 = tuple(position)
             for score, shape in self.score_model:
-                if shape_len5 == shape or shape_len6 == shape:
-                    if score > max_score[0]:
-                        max_score = (score, ((i + (0 + noffset) * x_direction, j + (0 + noffset) * y_direction),
-                                             (i + (1 + noffset) * x_direction, j + (1 + noffset) * y_direction),
-                                             (i + (2 + noffset) * x_direction, j + (2 + noffset) * y_direction),
-                                             (i + (3 + noffset) * x_direction, j + (3 + noffset) * y_direction),
-                                             (i + (4 + noffset) * x_direction, j + (4 + noffset) * y_direction)), (x_direction, y_direction))
+                if (
+                    shape_len5 == shape or shape_len6 == shape
+                ) and score > max_score[0]:
+                    max_score = (score, ((i + (0 + noffset) * x_direction, j + (0 + noffset) * y_direction),
+                                         (i + (1 + noffset) * x_direction, j + (1 + noffset) * y_direction),
+                                         (i + (2 + noffset) * x_direction, j + (2 + noffset) * y_direction),
+                                         (i + (3 + noffset) * x_direction, j + (3 + noffset) * y_direction),
+                                         (i + (4 + noffset) * x_direction, j + (4 + noffset) * y_direction)), (x_direction, y_direction))
         if max_score[1] is not None:
             for each in all_scores:
                 for p1 in each[1]:
@@ -169,5 +170,4 @@ class AIGobang():
             passive_score += score
             score, passive_all_scores = self.__calcScore(item[0], item[1], -1, 1, list2, list1, passive_all_scores)
             passive_score += score
-        total_score = active_score - passive_score * 0.1
-        return total_score
+        return active_score - passive_score * 0.1

@@ -23,23 +23,22 @@ class pusherSprite(pygame.sprite.Sprite):
     def move(self, direction, is_test=False):
         # 测试模式代表模拟移动
         if is_test:
-            if direction == 'up':
-                return self.col, self.row - 1
-            elif direction == 'down':
+            if direction == 'down':
                 return self.col, self.row + 1
             elif direction == 'left':
                 return self.col - 1, self.row
             elif direction == 'right':
                 return self.col + 1, self.row
-        else:
-            if direction == 'up':
-                self.row -= 1
-            elif direction == 'down':
-                self.row += 1
-            elif direction == 'left':
-                self.col -= 1
-            elif direction == 'right':
-                self.col += 1
+            elif direction == 'up':
+                return self.col, self.row - 1
+        elif direction == 'down':
+            self.row += 1
+        elif direction == 'left':
+            self.col -= 1
+        elif direction == 'right':
+            self.col += 1
+        elif direction == 'up':
+            self.row -= 1
     '''将人物画到游戏界面上'''
     def draw(self, screen):
         self.rect.x = self.rect.width * self.col
@@ -68,23 +67,23 @@ class elementSprite(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
     '''移动游戏元素'''
     def move(self, direction, is_test=False):
-        if self.sprite_type == 'box':
+        if self.sprite_type != 'box':
+            return
             # 测试模式代表模拟移动
-            if is_test:
-                if direction == 'up':
-                    return self.col, self.row - 1
-                elif direction == 'down':
-                    return self.col, self.row + 1
-                elif direction == 'left':
-                    return self.col - 1, self.row
-                elif direction == 'right':
-                    return self.col + 1, self.row
-            else:
-                if direction == 'up':
-                    self.row -= 1
-                elif direction == 'down':
-                    self.row += 1
-                elif direction == 'left':
-                    self.col -= 1
-                elif direction == 'right':
-                    self.col += 1
+        if is_test:
+            if direction == 'down':
+                return self.col, self.row + 1
+            elif direction == 'left':
+                return self.col - 1, self.row
+            elif direction == 'right':
+                return self.col + 1, self.row
+            elif direction == 'up':
+                return self.col, self.row - 1
+        elif direction == 'down':
+            self.row += 1
+        elif direction == 'left':
+            self.col -= 1
+        elif direction == 'right':
+            self.col += 1
+        elif direction == 'up':
+            self.row -= 1

@@ -15,7 +15,7 @@ def ShowEndGameInterface(screen, cfg, score, highest_score, resource_loader):
     # 显示的文本信息设置
     font_big = resource_loader.fonts['default_l']
     font_small = resource_loader.fonts['default_s']
-    text_title = font_big.render(f"Time is up!", True, (255, 0, 0))
+    text_title = font_big.render("Time is up!", True, (255, 0, 0))
     text_title_rect = text_title.get_rect()
     text_title_rect.centerx = screen.get_rect().centerx
     text_title_rect.centery = screen.get_rect().centery - 100
@@ -23,7 +23,9 @@ def ShowEndGameInterface(screen, cfg, score, highest_score, resource_loader):
     text_score_rect = text_score.get_rect()
     text_score_rect.centerx = screen.get_rect().centerx
     text_score_rect.centery = screen.get_rect().centery - 10
-    text_tip = font_small.render(f"Enter Q to quit game or Enter R to restart game", True, (255, 0, 0))
+    text_tip = font_small.render(
+        "Enter Q to quit game or Enter R to restart game", True, (255, 0, 0)
+    )
     text_tip_rect = text_tip.get_rect()
     text_tip_rect.centerx = screen.get_rect().centerx
     text_tip_rect.centery = screen.get_rect().centery + 60

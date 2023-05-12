@@ -22,7 +22,7 @@ def drawGameGrid(cfg, screen):
 def showScore(cfg, score, screen, resource_loader):
     color = (255, 255, 255)
     font = resource_loader.fonts['default30']
-    text = font.render('Score: %s' % score, True, color)
+    text = font.render(f'Score: {score}', True, color)
     rect = text.get_rect()
     rect.topleft = (10, 10)
     screen.blit(text, rect)

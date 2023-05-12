@@ -89,25 +89,26 @@ class PacmanGame(PygameBaseGame):
                 if event.type == pygame.QUIT:
                     QuitGame()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        for hero in hero_sprites:
+                    for hero in hero_sprites:
+                        if event.key == pygame.K_LEFT:
                             hero.changeSpeed([-1, 0])
                             hero.is_move = True
-                    elif event.key == pygame.K_RIGHT:
-                        for hero in hero_sprites:
+                        elif event.key == pygame.K_RIGHT:
                             hero.changeSpeed([1, 0])
                             hero.is_move = True
-                    elif event.key == pygame.K_UP:
-                        for hero in hero_sprites:
+                        elif event.key == pygame.K_UP:
                             hero.changeSpeed([0, -1])
                             hero.is_move = True
-                    elif event.key == pygame.K_DOWN:
-                        for hero in hero_sprites:
+                        elif event.key == pygame.K_DOWN:
                             hero.changeSpeed([0, 1])
                             hero.is_move = True
-                if event.type == pygame.KEYUP:
-                    if (event.key == pygame.K_LEFT) or (event.key == pygame.K_RIGHT) or (event.key == pygame.K_UP) or (event.key == pygame.K_DOWN):
-                        hero.is_move = False
+                if event.type == pygame.KEYUP and event.key in [
+                    pygame.K_LEFT,
+                    pygame.K_RIGHT,
+                    pygame.K_UP,
+                    pygame.K_DOWN,
+                ]:
+                    hero.is_move = False
             screen.fill(cfg.BLACK)
             for hero in hero_sprites:
                 hero.update(wall_sprites, gate_sprites)
@@ -128,7 +129,7 @@ class PacmanGame(PygameBaseGame):
                 '''
                 # 指定幽灵运动路径
                 if ghost.tracks_loc[1] < ghost.tracks[ghost.tracks_loc[0]][2]:
-                    ghost.changeSpeed(ghost.tracks[ghost.tracks_loc[0]][0: 2])
+                    ghost.changeSpeed(ghost.tracks[ghost.tracks_loc[0]][:2])
                     ghost.tracks_loc[1] += 1
                 else:
                     if ghost.tracks_loc[0] < len(ghost.tracks) - 1:
@@ -137,10 +138,10 @@ class PacmanGame(PygameBaseGame):
                         ghost.tracks_loc[0] = 2
                     else:
                         ghost.tracks_loc[0] = 0
-                    ghost.changeSpeed(ghost.tracks[ghost.tracks_loc[0]][0: 2])
+                    ghost.changeSpeed(ghost.tracks[ghost.tracks_loc[0]][:2])
                     ghost.tracks_loc[1] = 0
                 if ghost.tracks_loc[1] < ghost.tracks[ghost.tracks_loc[0]][2]:
-                    ghost.changeSpeed(ghost.tracks[ghost.tracks_loc[0]][0: 2])
+                    ghost.changeSpeed(ghost.tracks[ghost.tracks_loc[0]][:2])
                 else:
                     if ghost.tracks_loc[0] < len(ghost.tracks) - 1:
                         loc0 = ghost.tracks_loc[0] + 1
@@ -148,10 +149,10 @@ class PacmanGame(PygameBaseGame):
                         loc0 = 2
                     else:
                         loc0 = 0
-                    ghost.changeSpeed(ghost.tracks[loc0][0: 2])
+                    ghost.changeSpeed(ghost.tracks[loc0][:2])
                 ghost.update(wall_sprites, None)
             ghost_sprites.draw(screen)
-            score_text = font.render("Score: %s" % SCORE, True, cfg.RED)
+            score_text = font.render(f"Score: {SCORE}", True, cfg.RED)
             screen.blit(score_text, [10, 10])
             if len(food_sprites) == 0:
                 is_clearance = True
@@ -180,16 +181,13 @@ class PacmanGame(PygameBaseGame):
                     QuitGame()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        if is_clearance:
-                            if not flag:
-                                return
-                            else:
-                                self.run()
+                        if is_clearance and not flag:
+                            return
                         else:
                             self.run()
                     elif event.key == pygame.K_ESCAPE:
                         QuitGame()
-            for idx, (text, position) in enumerate(zip(texts, positions)):
+            for text, position in zip(texts, positions):
                 screen.blit(text, position)
             pygame.display.flip()
             clock.tick(self.cfg.FPS)

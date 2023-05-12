@@ -14,10 +14,14 @@ from .....utils import QuitGame
 def endInterface(screen, end_image, again_images, score_info, font_path, font_colors, screensize):
     again_image = again_images[0]
     font = pygame.font.Font(font_path, 50)
-    your_score_text = font.render('Your Score: %s' % score_info['your_score'], True, font_colors[0])
+    your_score_text = font.render(
+        f"Your Score: {score_info['your_score']}", True, font_colors[0]
+    )
     your_score_rect = your_score_text.get_rect()
     your_score_rect.left, your_score_rect.top = (screensize[0] - your_score_rect.width) / 2, 215
-    best_score_text = font.render('Best Score: %s' % score_info['best_score'], True, font_colors[1])
+    best_score_text = font.render(
+        f"Best Score: {score_info['best_score']}", True, font_colors[1]
+    )
     best_score_rect = best_score_text.get_rect()
     best_score_rect.left, best_score_rect.top = (screensize[0] - best_score_rect.width) / 2, 275
     while True:
